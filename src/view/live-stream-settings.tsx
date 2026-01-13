@@ -101,7 +101,6 @@ export function LiveStreamSettings() {
       toast.success("直播间标题更新成功")
     } catch (error) {
       toast.error((error as Error).message)
-      setIsStreaming(false)
     }
   }
 
@@ -112,7 +111,6 @@ export function LiveStreamSettings() {
       toast.success("直播间分区更新成功")
     } catch (error) {
       toast.error((error as Error).message)
-      setIsStreaming(false)
     }
   }
 
