@@ -3,15 +3,16 @@ import { Play, Square, Copy, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useConfigStore } from "@/store/config"
-import type { Area } from "@/types/config"
+import type { Area, Stream } from "@/types/config"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../components/ui/dialog"
 import { QRCodeSVG } from "qrcode.react"
 import { toast } from "sonner"
 import { LoadingButton } from "../components/ui/loading-button"
 import { getLiveVersion, startLive, stopLive, updateRoomArea, updateRoomTitle } from "@/api/live"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export function LiveStreamSettings() {
 
@@ -21,7 +22,7 @@ export function LiveStreamSettings() {
 
   const updateConfig = useConfigStore((s) => s.updateConfig);
   const areaList = useConfigStore((s) => s.config.areaList);
-  const { roomTitle, categoryId, areaId, isOpenLive, rtmpAddress, streamKey } = useConfigStore((s) => s.config);
+  const { roomTitle, categoryId, areaId, isOpenLive, streams } = useConfigStore((s) => s.config);
 
   const selectedParent = useMemo(() => areaList.find((p) => p.id === categoryId), [areaList, categoryId]);
   const childAreas: Area[] = useMemo(() => selectedParent?.list ?? [], [selectedParent]);
@@ -65,9 +66,37 @@ export function LiveStreamSettings() {
           return
         case 0:
           // 成功
-          useConfigStore.getState().updateConfig({ rtmpAddress: startRes.data.rtmp.addr })
-          useConfigStore.getState().updateConfig({ streamKey: startRes.data.rtmp.code })
-          break
+          {
+            let rtmp = 1
+            let srt = 0
+            const result: Stream[] = []
+            result.push({
+              type: "rtmp-1",
+              address: startRes.data.rtmp.addr,
+              key: startRes.data.rtmp.code
+            })
+            startRes.data.protocols.forEach((v) => {
+              if (v.protocol === "rtmp" && v.addr && v.code) {
+                rtmp++
+                result.push({
+                  type: `rtmp-${rtmp}`,
+                  address: v.addr,
+                  key: v.code
+                })
+              }
+              if (v.protocol === "srt" && v.addr && v.code) {
+                srt++
+                result.push({
+                  type: `srt-${srt}`,
+                  address: v.addr,
+                  key: v.code
+                })
+              }
+            })
+            result.sort((a, b) => a.type.localeCompare(b.type))
+            updateConfig({ streams: result })
+            break
+          }
         default:
           throw new Error("开始直播失败：" + startRes.message)
       }
@@ -140,8 +169,6 @@ export function LiveStreamSettings() {
                 </Label>
                 <Select value={categoryId}
                   onValueChange={(value) => {
-                    //setCategory(value)
-                    //setArea("")
                     updateConfig({
                       categoryId: value,
                       areaId: ""
@@ -223,28 +250,53 @@ export function LiveStreamSettings() {
       </div>
       {isOpenLive && (
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm">流媒体凭证 (RTMP)</CardTitle>
-          </CardHeader>
           <CardContent className="space-y-3">
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">RTMP 地址</Label>
-              <div className="flex items-center gap-2">
-                <Input value={rtmpAddress} readOnly className="font-mono text-sm" />
-                <Button variant="secondary" size="icon" onClick={() => handleCopy(rtmpAddress, "rtmp")}>
-                  {copiedField === "rtmp" ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
-                </Button>
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">流密钥</Label>
-              <div className="flex items-center gap-2">
-                <Input value={streamKey} readOnly className="font-mono text-sm" />
-                <Button variant="secondary" size="icon" onClick={() => handleCopy(streamKey, "key")}>
-                  {copiedField === "key" ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
-                </Button>
-              </div>
-            </div>
+            <div className="text-sm">流媒体凭证</div>
+            <Tabs defaultValue="rtmp-1" className="w-full">
+              <TabsList className="w-full mb-4">
+                {streams.map((stream) => (
+                  <TabsTrigger key={stream.type} value={stream.type}>{stream.type.toUpperCase()}</TabsTrigger>
+                ))}
+              </TabsList>
+              {streams.map((stream) => (
+                <TabsContent key={stream.type} value={stream.type} className="space-y-3 mt-0">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">服务器地址</Label>
+                    <div className="flex items-center gap-2">
+                      <Input value={stream.address} readOnly className="font-mono text-xs" />
+                      <Button
+                        variant="secondary"
+                        size="icon"
+                        onClick={() => handleCopy(stream.address, stream.type)}
+                      >
+                        {copiedField === stream.type ? (
+                          <Check className="w-4 h-4 text-primary" />
+                        ) : (
+                          <Copy className="w-4 h-4" />
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">流密钥</Label>
+                    <div className="flex items-center gap-2">
+                      <Input value={stream.key} readOnly className="font-mono text-xs" />
+                      <Button
+                        variant="secondary"
+                        size="icon"
+                        onClick={() => handleCopy(stream.key, `${stream.type}-key`)}
+                      >
+                        {copiedField === `${stream.type}-key` ? (
+                          <Check className="w-4 h-4 text-primary" />
+                        ) : (
+                          <Copy className="w-4 h-4" />
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </TabsContent>
+              ))}
+            </Tabs>
           </CardContent>
         </Card>
       )}

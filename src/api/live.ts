@@ -25,6 +25,14 @@ interface LiveVersion {
     build: number
 }
 
+interface StartLiveProtocols {
+    protocol: string
+    addr: string
+    code: string
+    new_link: string
+    provider: string
+}
+
 interface StartLive {
     code: number
     data: {
@@ -32,7 +40,8 @@ interface StartLive {
         rtmp: {
             addr: string
             code: string
-        }
+        },
+        protocols: StartLiveProtocols[]
     },
     message: string
 }

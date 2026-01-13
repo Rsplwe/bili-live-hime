@@ -25,6 +25,12 @@ export interface Area {
     area_type: string;
 }
 
+export interface Stream {
+    type: string
+    address: string
+    key: string
+}
+
 export interface AppConfig {
     cookies: AppCookie[];
     areaList: ParentArea[];
@@ -41,8 +47,7 @@ export interface AppConfig {
     sub_url: string;
     roomToken: string;
     isOpenLive: boolean;
-    rtmpAddress: string;
-    streamKey: string;
+    streams: Stream[]
 }
 
 export const DEFAULT_CONFIG: AppConfig = {
@@ -61,6 +66,5 @@ export const DEFAULT_CONFIG: AppConfig = {
     sub_url: "",
     roomToken: "",
     isOpenLive: false,
-    rtmpAddress: "",
-    streamKey: ""
+    streams: []
 };
