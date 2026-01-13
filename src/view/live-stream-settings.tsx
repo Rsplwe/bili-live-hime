@@ -19,30 +19,19 @@ export function LiveStreamSettings() {
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("")
   const [isQrDialogOpen, setIsQrDialogOpen] = useState<boolean>(false)
 
-  const {
-    areaList,
-    parentAreaId,
-    areaId,
-    roomTitle,
-    rtmpAddress,
-    streamKey,
-    isOpenLive
-  } = useConfigStore((s) => s.config)
+  const updateConfig = useConfigStore((s) => s.updateConfig);
+  const areaList = useConfigStore((s) => s.config.areaList);
+  const { roomTitle, categoryId, areaId, isOpenLive, rtmpAddress, streamKey } = useConfigStore((s) => s.config);
 
-  const updateConfig = useConfigStore((s) => s.updateConfig)
-
-  const selectedParent = useMemo(() => areaList.find((p) => p.id === parentAreaId), [areaList, parentAreaId])
-  const childAreas: Area[] = useMemo(() => selectedParent?.list ?? [], [selectedParent])
-
-  const isAreaValid = useMemo(() => {
-    if (!parentAreaId || !areaId) return false;
-    return childAreas.some(a => a.id === areaId);
-  }, [parentAreaId, areaId, childAreas]);
+  const selectedParent = useMemo(() => areaList.find((p) => p.id === categoryId), [areaList, categoryId]);
+  const childAreas: Area[] = useMemo(() => selectedParent?.list ?? [], [selectedParent]);
+  const isTitleValid = useMemo(() => { return roomTitle.trim() !== ""; }, [roomTitle]);
+  const isCategoryValid = useMemo(() => { return categoryId !== "" }, [categoryId]);
+  const isAreaValid = useMemo(() => { return areaId !== "" }, [areaId]);
 
   const canStartStream = useMemo(() => {
-    const isBaseValid = !isOpenLive && !!roomTitle?.trim();
-    return isBaseValid && isAreaValid;
-  }, [isOpenLive, roomTitle, isAreaValid]);
+    return !isOpenLive && isTitleValid && isCategoryValid && isAreaValid;
+  }, [isOpenLive, isTitleValid, isCategoryValid, isAreaValid]);
 
   const handleCopy = async (text: string, field: string) => {
     await navigator.clipboard.writeText(text)
@@ -107,7 +96,7 @@ export function LiveStreamSettings() {
   const handleUpdateArea = async () => {
     // 设置直播间分区
     try {
-      await updateRoomArea(areaId || '')
+      await updateRoomArea(areaId)
       toast.success("直播间分区更新成功")
     } catch (error) {
       toast.error((error as Error).message)
@@ -130,7 +119,7 @@ export function LiveStreamSettings() {
                   placeholder="请输入您的直播标题……"
                   className="flex-1"
                 />
-                <LoadingButton disabled={roomTitle.trim() === ""} onClickAsync={handleUpdateTitle}>
+                <LoadingButton onClickAsync={handleUpdateTitle} disabled={!isTitleValid}>
                   更新
                 </LoadingButton>
               </div>
@@ -140,7 +129,7 @@ export function LiveStreamSettings() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Label>分区设置</Label>
-              <LoadingButton variant="outline" size="sm" disabled={areaId === null} onClickAsync={handleUpdateArea}>
+              <LoadingButton variant="outline" size="sm" disabled={!isAreaValid} onClickAsync={handleUpdateArea}>
                 更新分区
               </LoadingButton>
             </div>
@@ -149,10 +138,14 @@ export function LiveStreamSettings() {
                 <Label htmlFor="category" className="text-xs text-muted-foreground">
                   分类
                 </Label>
-                <Select value={parentAreaId || ""}
+                <Select value={categoryId}
                   onValueChange={(value) => {
-                    updateConfig({ parentAreaId: value })
-                    updateConfig({ areaId: null })
+                    //setCategory(value)
+                    //setArea("")
+                    updateConfig({
+                      categoryId: value,
+                      areaId: ""
+                    })
                   }}>
                   <SelectTrigger id="category">
                     <SelectValue placeholder="选择分类" />
@@ -171,11 +164,13 @@ export function LiveStreamSettings() {
                 <Label htmlFor="area" className="text-xs text-muted-foreground">
                   子分区
                 </Label>
-                <Select value={areaId || ""}
+                <Select value={areaId}
                   onValueChange={(value) => {
-                    updateConfig({ areaId: value })
+                    updateConfig({
+                      areaId: value
+                    })
                   }}
-                  disabled={!selectedParent}>
+                  disabled={!isCategoryValid}>
                   <SelectTrigger id="area">
                     <SelectValue placeholder="选择分区" />
                   </SelectTrigger>

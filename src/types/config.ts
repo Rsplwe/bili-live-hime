@@ -35,8 +35,8 @@ export interface AppConfig {
     roomId: number;
     csrf: string | null;
     roomTitle: string;
-    parentAreaId: string | null;
-    areaId: string | null;
+    categoryId: string;
+    areaId: string;
     img_url: string;
     sub_url: string;
     roomToken: string;
@@ -55,8 +55,8 @@ export const DEFAULT_CONFIG: AppConfig = {
     roomId: 0,
     csrf: null,
     roomTitle: "",
-    parentAreaId: null,
-    areaId: null,
+    categoryId: "",
+    areaId: "",
     img_url: "",
     sub_url: "",
     roomToken: "",
