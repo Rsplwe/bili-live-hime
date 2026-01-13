@@ -7,13 +7,11 @@ import { useEffect, useState } from "react";
 export function Navbar() {
 
   const [isMaximized, setIsMaximized] = useState(false)
-
   const [version, setVersion] = useState("");
 
   useEffect(() => {
     getVersion().then(setVersion);
   }, []);
-
 
   const handleMaximizeToggle = async () => {
     if (isMaximized) {

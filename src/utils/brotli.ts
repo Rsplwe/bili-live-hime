@@ -1,10 +1,11 @@
+/* eslint-disable */
 /* Copyright 2017 Google Inc. All Rights Reserved.
 
    Distributed under MIT license.
    See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
 */
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+ 
 // @ts-nocheck
 
 interface BrotliDecodeOptions {

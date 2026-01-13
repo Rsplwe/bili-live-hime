@@ -10,8 +10,8 @@ import { type Comment } from "@/types/comment"
 import { startWs, stopWs } from "@/ws/wsClient"
 import { Input } from "@/components/ui/input"
 import { sendComment } from "@/api/live"
-import { toast } from "sonner"
 import { LoadingButton } from "@/components/ui/loading-button"
+import { toast } from "sonner"
 
 export function LiveComments() {
   const [newMessage, setNewMessage] = useState("")
