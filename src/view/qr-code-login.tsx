@@ -1,108 +1,108 @@
-import { useState, useEffect, useCallback } from "react"
-import { RefreshCw, CheckCircle2, XCircle, Loader2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { QRCodeSVG } from 'qrcode.react';
+import { useState, useEffect, useCallback } from "react";
+import { RefreshCw, CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { QRCodeSVG } from "qrcode.react";
 import { getLoginQrcode, pollQrCodeStatus } from "@/api/passport";
 
 interface QRCodeLoginProps {
-  onLoginSuccess: () => void
+  onLoginSuccess: () => void;
 }
 
-type QRStatus = "loading" | "pending" | "scanned" | "confirmed" | "expired" | "error"
+type QRStatus = "loading" | "pending" | "scanned" | "confirmed" | "expired" | "error";
 
 export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
-  const [qrStatus, setQrStatus] = useState<QRStatus>("loading")
-  const [qrCodeUrl, setQrCodeUrl] = useState<string>("")
-  const [qrCodeKey, setQrCodeKey] = useState<string>("")
+  const [qrStatus, setQrStatus] = useState<QRStatus>("loading");
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
+  const [qrCodeKey, setQrCodeKey] = useState<string>("");
 
   const generateQRCode = useCallback(async () => {
-    setQrStatus("loading")
+    setQrStatus("loading");
     try {
-      const qrcode = await getLoginQrcode()
-      setQrCodeUrl(qrcode.url)
-      setQrCodeKey(qrcode.qrcode_key)
-      setQrStatus("pending")
+      const qrcode = await getLoginQrcode();
+      setQrCodeUrl(qrcode.url);
+      setQrCodeKey(qrcode.qrcode_key);
+      setQrStatus("pending");
     } catch (error) {
-      console.error("Failed to generate QR code:", error)
-      setQrStatus("error")
+      console.error("Failed to generate QR code:", error);
+      setQrStatus("error");
     }
-  }, [])
+  }, []);
   useEffect(() => {
-    generateQRCode()
+    generateQRCode();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   useEffect(() => {
-    if (qrStatus !== "pending" && qrStatus !== "scanned") return
+    if (qrStatus !== "pending" && qrStatus !== "scanned") return;
 
     const pollInterval = setInterval(async () => {
       try {
-        const data = await pollQrCodeStatus(qrCodeKey)
+        const data = await pollQrCodeStatus(qrCodeKey);
 
         switch (data.code) {
           case 0:
-            setQrStatus("confirmed")
-            clearInterval(pollInterval)
+            setQrStatus("confirmed");
+            clearInterval(pollInterval);
             onLoginSuccess();
-            break
+            break;
           case 86038:
-            setQrStatus("expired")
-            clearInterval(pollInterval)
-            break
+            setQrStatus("expired");
+            clearInterval(pollInterval);
+            break;
           case 86090:
-            setQrStatus("scanned")
-            break
+            setQrStatus("scanned");
+            break;
         }
       } catch (error) {
-        console.error("Polling error:", error)
+        console.error("Polling error:", error);
       }
-    }, 1000)
+    }, 1000);
 
     const expireTimeout = setTimeout(() => {
       if (qrStatus === "pending") {
-        setQrStatus("expired")
-        clearInterval(pollInterval)
+        setQrStatus("expired");
+        clearInterval(pollInterval);
       }
-    }, 180000)
+    }, 180000);
 
     return () => {
-      clearInterval(pollInterval)
-      clearTimeout(expireTimeout)
-    }
-  }, [qrStatus, qrCodeKey, onLoginSuccess])
+      clearInterval(pollInterval);
+      clearTimeout(expireTimeout);
+    };
+  }, [qrStatus, qrCodeKey, onLoginSuccess]);
 
   const getStatusMessage = () => {
     switch (qrStatus) {
       case "loading":
-        return "生成二维码中…"
+        return "生成二维码中…";
       case "pending":
-        return "请使用哔哩哔哩 App 扫码"
+        return "请使用哔哩哔哩 App 扫码";
       case "scanned":
-        return "已扫码，请在手机上确认登入"
+        return "已扫码，请在手机上确认登入";
       case "confirmed":
-        return "登入成功！"
+        return "登入成功！";
       case "expired":
-        return "二维码已失效"
+        return "二维码已失效";
       case "error":
-        return "发生错误"
+        return "发生错误";
     }
-  }
+  };
 
   const getStatusIcon = () => {
     switch (qrStatus) {
       case "loading":
-        return <Loader2 className="w-4 h-4 animate-spin" />
+        return <Loader2 className="w-4 h-4 animate-spin" />;
       case "scanned":
-        return <Loader2 className="w-4 h-4 animate-spin text-primary" />
+        return <Loader2 className="w-4 h-4 animate-spin text-primary" />;
       case "confirmed":
-        return <CheckCircle2 className="w-4 h-4 text-primary" />
+        return <CheckCircle2 className="w-4 h-4 text-primary" />;
       case "expired":
       case "error":
-        return <XCircle className="w-4 h-4 text-destructive" />
+        return <XCircle className="w-4 h-4 text-destructive" />;
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   return (
     <div className="space-y-4">
@@ -149,5 +149,5 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
 
       <p className="text-xs text-center text-muted-foreground">打开您的哔哩哔哩 App 并扫描此二维码登入。</p>
     </div>
-  )
+  );
 }

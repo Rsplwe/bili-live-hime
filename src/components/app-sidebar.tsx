@@ -1,22 +1,20 @@
-import { User, Radio, MessageSquare, Settings } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { User, Radio, MessageSquare, Settings } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-type TabType = "account" | "stream" | "comments" | "settings"
+type TabType = "account" | "stream" | "comments" | "settings";
 
 const mainTabs = [
   { id: "account" as const, label: "个人信息", icon: User },
   { id: "stream" as const, label: "开播设置", icon: Radio },
   { id: "comments" as const, label: "弹幕", icon: MessageSquare },
-]
+];
 
-const bottomTabs = [
-  { id: "settings" as const, label: "设置", icon: Settings }
-]
+const bottomTabs = [{ id: "settings" as const, label: "设置", icon: Settings }];
 
 interface AppSidebarProps {
-  activeTab: TabType
-  onTabChange: (tab: TabType) => void
+  activeTab: TabType;
+  onTabChange: (tab: TabType) => void;
 }
 
 export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
@@ -31,8 +29,7 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
             className={cn(
               "w-full justify-start gap-3 h-auto py-2.5",
               activeTab === tab.id && "bg-sidebar-accent text-sidebar-accent-foreground",
-            )}
-          >
+            )}>
             <tab.icon className="w-4 h-4" />
             {tab.label}
           </Button>
@@ -47,15 +44,14 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
             className={cn(
               "w-full justify-start gap-3 h-auto py-2.5",
               activeTab === tab.id && "bg-sidebar-accent text-sidebar-accent-foreground",
-            )}
-          >
+            )}>
             <tab.icon className="w-4 h-4" />
             {tab.label}
           </Button>
         ))}
       </nav>
     </aside>
-  )
+  );
 }
 
-export type { TabType }
+export type { TabType };

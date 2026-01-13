@@ -1,45 +1,45 @@
-import { useState, useEffect, useRef } from "react"
-import { Gift, Send } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { useWsStore } from "@/store/ws"
-import { type Comment } from "@/types/comment"
-import { startWs, stopWs } from "@/ws/wsClient"
-import { Input } from "@/components/ui/input"
-import { sendComment } from "@/api/live"
-import { LoadingButton } from "@/components/ui/loading-button"
-import { toast } from "sonner"
+import { useState, useEffect, useRef } from "react";
+import { Gift, Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useWsStore } from "@/store/ws";
+import { type Comment } from "@/types/comment";
+import { startWs, stopWs } from "@/ws/ws-client";
+import { Input } from "@/components/ui/input";
+import { sendComment } from "@/api/live";
+import { LoadingButton } from "@/components/ui/loading-button";
+import { toast } from "sonner";
 
 export function LiveComments() {
-  const [newMessage, setNewMessage] = useState("")
-  const [autoScroll, setAutoScroll] = useState(true)
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const messages = useWsStore((s) => s.messages)
-  const connected = useWsStore((s) => s.connected)
+  const [newMessage, setNewMessage] = useState("");
+  const [autoScroll, setAutoScroll] = useState(true);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const messages = useWsStore((s) => s.messages);
+  const connected = useWsStore((s) => s.connected);
 
   useEffect(() => {
     if (autoScroll && scrollRef.current) {
-      const viewport = scrollRef.current.querySelector('[data-radix-scroll-area-viewport]');
+      const viewport = scrollRef.current.querySelector("[data-radix-scroll-area-viewport]");
       if (viewport) {
         viewport.scrollTo({
           top: viewport.scrollHeight,
-          behavior: 'smooth'
+          behavior: "smooth",
         });
       }
     }
-  }, [messages.length, autoScroll])
+  }, [messages.length, autoScroll]);
 
   const handleSendMessage = async () => {
     try {
-      await sendComment(newMessage)
-      setNewMessage("")
+      await sendComment(newMessage);
+      setNewMessage("");
     } catch (e: unknown) {
-      toast.error((e as Error).message)
+      toast.error((e as Error).message);
     }
-  }
+  };
 
   const renderComment = (comment: Comment) => {
     if (comment.type === "enter") {
@@ -47,7 +47,7 @@ export function LiveComments() {
         <div key={comment.id} className="text-xs text-muted-foreground py-1 px-2">
           <span className="text-primary">{comment.username}</span> {comment.message}
         </div>
-      )
+      );
     }
 
     if (comment.type === "gift") {
@@ -62,7 +62,7 @@ export function LiveComments() {
             </span>
           </span>
         </div>
-      )
+      );
     }
 
     return (
@@ -83,8 +83,8 @@ export function LiveComments() {
           <p className="text-sm text-foreground break-words">{comment.message}</p>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div className="space-y-4">
@@ -95,28 +95,28 @@ export function LiveComments() {
           <Button variant={autoScroll ? "default" : "outline"} size="sm" onClick={() => setAutoScroll(!autoScroll)}>
             自动滚动 {autoScroll ? "开" : "关"}
           </Button>
-          <LoadingButton variant={connected ? "destructive" : "default"} onClickAsync={
-            async () => {
+          <LoadingButton
+            variant={connected ? "destructive" : "default"}
+            onClickAsync={async () => {
               try {
                 if (!connected) {
-                  await startWs()
-                  console.log("连接成功")
+                  await startWs();
+                  console.log("连接成功");
                 } else {
-                  await stopWs()
+                  await stopWs();
                 }
               } catch {
-                alert("连接失败")
+                alert("连接失败");
               }
-            }
-          }>{!connected ? "连接" : "断开"}</LoadingButton>
+            }}>
+            {!connected ? "连接" : "断开"}
+          </LoadingButton>
         </div>
       </div>
       <Card>
         <CardContent className="p-0" ref={scrollRef}>
           <ScrollArea className="h-[calc(100vh-300px)] w-full">
-            <div className="p-2">
-              {messages.map(renderComment)}
-            </div>
+            <div className="p-2">{messages.map(renderComment)}</div>
           </ScrollArea>
         </CardContent>
       </Card>
@@ -135,5 +135,5 @@ export function LiveComments() {
         </LoadingButton>
       </div>
     </div>
-  )
+  );
 }

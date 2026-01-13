@@ -1,12 +1,11 @@
-import { Radio, Minus, X, Square, Maximize2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Radio, Minus, X, Square, Maximize2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { getVersion } from "@tauri-apps/api/app";
-import { getCurrentWindow } from '@tauri-apps/api/window';
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useEffect, useState } from "react";
 
 export function Navbar() {
-
-  const [isMaximized, setIsMaximized] = useState(false)
+  const [isMaximized, setIsMaximized] = useState(false);
   const [version, setVersion] = useState("");
 
   useEffect(() => {
@@ -17,13 +16,15 @@ export function Navbar() {
     if (isMaximized) {
       await getCurrentWindow().unmaximize();
     } else {
-      await getCurrentWindow().maximize()
+      await getCurrentWindow().maximize();
     }
-    setIsMaximized(!isMaximized)
-  }
+    setIsMaximized(!isMaximized);
+  };
 
   return (
-    <header data-tauri-drag-region className="h-12 shrink-0 border-b border-border bg-card flex items-center justify-between px-4">
+    <header
+      data-tauri-drag-region
+      className="h-12 shrink-0 border-b border-border bg-card flex items-center justify-between px-4">
       <div className="flex items-center gap-3">
         <Radio className="w-5 h-5 text-primary" />
         <h1 className="text-base font-semibold text-foreground">
@@ -36,27 +37,24 @@ export function Navbar() {
           variant="ghost"
           size="icon"
           className="h-8 w-8 rounded-sm hover:bg-secondary"
-          onClick={() => getCurrentWindow().minimize()}
-        >
+          onClick={() => getCurrentWindow().minimize()}>
           <Minus className="h-4 w-4" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
           className="h-8 w-8 rounded-sm hover:bg-secondary"
-          onClick={handleMaximizeToggle}
-        >
+          onClick={handleMaximizeToggle}>
           {isMaximized ? <Square className="h-3.5 w-3.5" /> : <Maximize2 className="h-4 w-4" />}
         </Button>
         <Button
           variant="ghost"
           size="icon"
           className="h-8 w-8 rounded-sm hover:bg-destructive hover:text-destructive-foreground"
-          onClick={() => getCurrentWindow().close()}
-        >
+          onClick={() => getCurrentWindow().close()}>
           <X className="h-4 w-4" />
         </Button>
       </div>
     </header>
-  )
+  );
 }

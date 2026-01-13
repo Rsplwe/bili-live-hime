@@ -1,75 +1,74 @@
-import { useState } from "react"
-import { Loader2, AlertCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { useConfigStore } from "@/store/config"
+import { useState } from "react";
+import { Loader2, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useConfigStore } from "@/store/config";
 
 interface CookieLoginProps {
-  onLoginSuccess: () => void
+  onLoginSuccess: () => void;
 }
 
 export function CookieLogin({ onLoginSuccess }: CookieLoginProps) {
-  const [cookie, setCookie] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [cookie, setCookie] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const parseCookie = (cookie: string): Record<string, string> => {
-    const result: Record<string, string> = {}
+    const result: Record<string, string> = {};
 
     cookie
       .split(";")
-      .map(item => item.trim())
+      .map((item) => item.trim())
       .filter(Boolean)
-      .forEach(pair => {
-        const eqIndex = pair.indexOf("=")
-        if (eqIndex === -1) return
+      .forEach((pair) => {
+        const eqIndex = pair.indexOf("=");
+        if (eqIndex === -1) return;
 
-        const key = pair.slice(0, eqIndex).trim()
-        const value = pair.slice(eqIndex + 1).trim()
+        const key = pair.slice(0, eqIndex).trim();
+        const value = pair.slice(eqIndex + 1).trim();
 
         if (key && value) {
-          result[key] = value
+          result[key] = value;
         }
-      })
+      });
 
-    return result
-  }
+    return result;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!cookie.trim()) {
-      setError("请输入您的小饼干~")
-      return
+      setError("请输入您的小饼干~");
+      return;
     }
 
-    setIsLoading(true)
-    setError(null)
+    setIsLoading(true);
+    setError(null);
 
     setTimeout(() => {
+      const parsed = parseCookie(cookie);
 
-      const parsed = parseCookie(cookie)
-
-      const missing: string[] = []
+      const missing: string[] = [];
 
       for (const key of ["SESSDATA", "bili_jct"]) {
         if (!parsed[key] || parsed[key].length === 0) {
-          missing.push(key)
+          missing.push(key);
         }
       }
 
       if (missing.length > 0) {
-        setError("Cookie 无效。请检查并重试。")
-        setIsLoading(false)
-        return
+        setError("Cookie 无效。请检查并重试。");
+        setIsLoading(false);
+        return;
       }
       const state = useConfigStore.getState();
       state.setCookies(Object.entries(parsed).map(([name, value]) => ({ name, value })));
       onLoginSuccess();
-      setIsLoading(true)
-    }, 1500)
-  }
+      setIsLoading(true);
+    }, 1500);
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -80,8 +79,8 @@ export function CookieLogin({ onLoginSuccess }: CookieLoginProps) {
             id="cookie"
             value={cookie}
             onChange={(e) => {
-              setCookie(e.target.value)
-              setError(null)
+              setCookie(e.target.value);
+              setError(null);
             }}
             placeholder="将您的 Cookie 粘贴到此处……"
             rows={4}
@@ -122,5 +121,5 @@ export function CookieLogin({ onLoginSuccess }: CookieLoginProps) {
         </p>
       </div>
     </form>
-  )
+  );
 }
