@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { QRCodeSVG } from "qrcode.react"
 import { toast } from "sonner"
 import { LoadingButton } from "../components/ui/loading-button"
-import { getLiveVersion, startLive, stopLive, updateRoomTitle } from "@/api/live"
+import { getLiveVersion, startLive, stopLive, updateRoomArea, updateRoomTitle } from "@/api/live"
 
 export function LiveStreamSettings() {
 
@@ -96,10 +96,20 @@ export function LiveStreamSettings() {
 
   const handleUpdateTitle = async () => {
     // 设置直播间标题
-
     try {
       await updateRoomTitle(roomTitle)
       toast.success("直播间标题更新成功")
+    } catch (error) {
+      toast.error((error as Error).message)
+      setIsStreaming(false)
+    }
+  }
+
+  const handleUpdateArea = async () => {
+    // 设置直播间分区
+    try {
+      await updateRoomArea(areaId || '')
+      toast.success("直播间分区更新成功")
     } catch (error) {
       toast.error((error as Error).message)
       setIsStreaming(false)
@@ -130,6 +140,12 @@ export function LiveStreamSettings() {
           </div>
 
           <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label>分区设置</Label>
+              <LoadingButton variant="outline" size="sm" disabled={areaId === null} onClickAsync={handleUpdateArea}>
+                更新分区
+              </LoadingButton>
+            </div>
             <div className="grid gap-4">
               <div className="space-y-2">
                 <Label htmlFor="category" className="text-xs text-muted-foreground">
@@ -204,9 +220,6 @@ export function LiveStreamSettings() {
           </div>
         </DialogContent>
       </Dialog>
-
-
-      {/* Start/End Stream Buttons */}
       <div className="space-y-2">
         {isOpenLive && (
           <div className="flex items-center gap-2 px-3 py-2 bg-primary/10 border border-primary/20 rounded-lg">
@@ -215,37 +228,33 @@ export function LiveStreamSettings() {
           </div>
         )}
       </div>
-
-      {/* Stream Credentials - shown when streaming */}
-      {
-        isOpenLive && (
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm">流媒体凭证 (RTMP)</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">RTMP 地址</Label>
-                <div className="flex items-center gap-2">
-                  <Input value={rtmpAddress} readOnly className="font-mono text-sm" />
-                  <Button variant="secondary" size="icon" onClick={() => handleCopy(rtmpAddress, "rtmp")}>
-                    {copiedField === "rtmp" ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
-                  </Button>
-                </div>
+      {isOpenLive && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm">流媒体凭证 (RTMP)</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">RTMP 地址</Label>
+              <div className="flex items-center gap-2">
+                <Input value={rtmpAddress} readOnly className="font-mono text-sm" />
+                <Button variant="secondary" size="icon" onClick={() => handleCopy(rtmpAddress, "rtmp")}>
+                  {copiedField === "rtmp" ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
+                </Button>
               </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">流密钥</Label>
-                <div className="flex items-center gap-2">
-                  <Input value={streamKey} readOnly className="font-mono text-sm" />
-                  <Button variant="secondary" size="icon" onClick={() => handleCopy(streamKey, "key")}>
-                    {copiedField === "key" ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
-                  </Button>
-                </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">流密钥</Label>
+              <div className="flex items-center gap-2">
+                <Input value={streamKey} readOnly className="font-mono text-sm" />
+                <Button variant="secondary" size="icon" onClick={() => handleCopy(streamKey, "key")}>
+                  {copiedField === "key" ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
+                </Button>
               </div>
-            </CardContent>
-          </Card>
-        )
-      }
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div >
   )
 }

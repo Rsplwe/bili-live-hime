@@ -110,6 +110,26 @@ export async function updateRoomTitle(title: string): Promise<[]> {
     )
 }
 
+export async function updateRoomArea(areaId: string): Promise<[]> {
+    const state = useConfigStore.getState()
+    return request<[]>(
+        `https://api.live.bilibili.com/room/v1/Room/update`,
+        {
+            method: "POST",
+            headers: {
+                origin: "https://api.live.bilibili.com"
+            },
+            data: {
+                'room_id': String(state.config.roomId),
+                'csrf': state.getCookie('bili_jct') || '',
+                'csrf_token': state.getCookie('bili_jct') || '',
+                'area_id': areaId,
+                'platform': 'pc_link',
+            }
+        }
+    )
+}
+
 export async function startLive(version: string, build: string): Promise<StartLive> {
     const state = useConfigStore.getState()
     return request<StartLive>(
