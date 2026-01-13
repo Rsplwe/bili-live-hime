@@ -134,7 +134,6 @@ export function LiveStreamSettings() {
 
   return (
     <div className="space-y-6">
-
       <Card>
         <CardContent className="space-y-3">
           <div className="space-y-1.5">
@@ -225,7 +224,7 @@ export function LiveStreamSettings() {
           </div>
         </CardContent>
       </Card>
-      <Dialog modal open={isQrDialogOpen} onOpenChange={(e) => setIsQrDialogOpen(e)}>
+      <Dialog modal open={isQrDialogOpen} onOpenChange={setIsQrDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>验证</DialogTitle>
