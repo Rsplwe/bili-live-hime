@@ -1,4 +1,6 @@
 # 哔哩哔哩直播姬（仮）
+[![GitHub License](https://img.shields.io/github/license/Rsplwe/bili-live-hime?style=flat-square)](https://github.com/Rsplwe/bili-live-hime/blob/main/LICENSE) [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/Rsplwe/bili-live-hime/publish-to-manual-release.yml?branch=main&style=flat-square)](https://github.com/Rsplwe/bili-live-hime/actions/workflows/publish-to-manual-release.yml)
+
 官方直播姬的轻量化、跨平台替代工具，支持 Windows / Linux / MacOS。
 
 ## 已支持的功能
