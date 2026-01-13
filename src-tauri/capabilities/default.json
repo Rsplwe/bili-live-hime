@@ -1,0 +1,52 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capability for the main window",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:default",
+    "opener:default",
+    "core:window:default",
+    "core:window:allow-start-dragging",
+    "core:window:allow-minimize",
+    "core:window:allow-close",
+    "core:window:allow-maximize",
+    "core:window:allow-unmaximize",
+    "core:window:allow-toggle-maximize",
+    "http:default",
+    {
+      "identifier": "http:default",
+      "allow": [
+        {
+          "url": "https://passport.bilibili.com/*"
+        },
+        {
+          "url": "https://api.bilibili.com/*"
+        },
+        {
+          "url": "https://api.live.bilibili.com/*"
+        },
+        {
+          "url": "https://*.hdslb.com/*"
+        }
+      ],
+      "deny": []
+    },
+    "fs:default",
+    "fs:read-all",
+    "fs:write-all",
+    "fs:allow-rename",
+    "fs:allow-mkdir",
+    "fs:allow-exists",
+    "fs:allow-watch",
+    "fs:read-dirs",
+    {
+      "identifier": "fs:scope",
+      "allow": [
+        "**/*"
+      ]
+    }
+  ]
+}
