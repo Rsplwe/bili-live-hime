@@ -86,7 +86,7 @@ export function CookieLogin({ onLoginSuccess }: CookieLoginProps) {
             }}
             placeholder="将您的 Cookie 粘贴到此处……"
             rows={4}
-            className="resize-none pr-10 font-mono text-xs"
+            className="resize-none font-mono text-xs field-sizing-fixed"
           />
         </div>
       </div>

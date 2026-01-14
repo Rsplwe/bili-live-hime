@@ -124,7 +124,7 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
         ) : (
           <>
             <div className="absolute inset-4 bg-foreground rounded-lg p-2">
-              <div className="w-full h-full bg-background rounded grid grid-cols-7 gap-0.5 p-2">
+              <div className="w-full h-full bg-background rounded gap-0.5 p-2">
                 <QRCodeSVG size={135} value={qrCodeUrl} />
               </div>
             </div>

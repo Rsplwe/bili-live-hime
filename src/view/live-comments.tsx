@@ -13,6 +13,7 @@ import { sendComment } from "@/api/live";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { toast } from "sonner";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { Label } from "@/components/ui/label";
 
 export function LiveComments() {
   const [newMessage, setNewMessage] = useState("");
@@ -90,7 +91,7 @@ export function LiveComments() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">直播弹幕</h2>
+        <Label className="text-xl">直播弹幕</Label>
         <div className="flex items-center gap-2">
           <Badge variant="outline">{messages.length} 条弹幕</Badge>
           <Button variant={autoScroll ? "default" : "outline"} onClick={() => setAutoScroll(!autoScroll)}>
@@ -98,7 +99,7 @@ export function LiveComments() {
             自动滚动 {autoScroll ? "开" : "关"}
           </Button>
           <LoadingButton
-            variant={connected ? "destructive" : "default"}
+            variant={connected ? "default" : "outline"}
             onClickAsync={async () => {
               try {
                 if (!connected) {

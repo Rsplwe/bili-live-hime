@@ -29,7 +29,7 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
             onClick={() => onTabChange(tab.id)}
             className={cn(
               "w-full justify-start gap-3 h-auto py-2.5",
-              activeTab === tab.id && "bg-sidebar-accent text-sidebar-accent-foreground",
+              activeTab === tab.id && "bg-sidebar-accent text-primary",
             )}>
             <HugeiconsIcon icon={tab.icon} />
             {tab.label}
@@ -44,7 +44,7 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
             onClick={() => onTabChange(tab.id)}
             className={cn(
               "w-full justify-start gap-3 h-auto py-2.5",
-              activeTab === tab.id && "bg-sidebar-accent text-sidebar-accent-foreground",
+              activeTab === tab.id && "bg-sidebar-accent text-primary",
             )}>
             <HugeiconsIcon icon={tab.icon} />
             {tab.label}
