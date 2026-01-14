@@ -7,10 +7,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useConfigStore } from "@/store/config";
 import type { Area, Stream } from "@/types/config";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { QRCodeSVG } from "qrcode.react";
 import { toast } from "sonner";
-import { LoadingButton } from "../components/ui/loading-button";
+import { LoadingButton } from "@/components/ui/loading-button";
 import { getLiveVersion, startLive, stopLive, updateRoomArea, updateRoomTitle } from "@/api/live";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -150,8 +150,8 @@ export function LiveStreamSettings() {
                   placeholder="请输入您的直播标题……"
                   className="flex-1"
                 />
-                <LoadingButton onClickAsync={handleUpdateTitle} disabled={!isTitleValid}>
-                  更新
+                <LoadingButton variant="outline" onClickAsync={handleUpdateTitle} disabled={!isTitleValid}>
+                  更新标题
                 </LoadingButton>
               </div>
             </div>

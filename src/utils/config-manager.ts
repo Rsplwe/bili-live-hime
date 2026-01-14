@@ -1,5 +1,5 @@
 import { writeTextFile, readTextFile, exists, BaseDirectory, mkdir } from "@tauri-apps/plugin-fs";
-import { type AppConfig, DEFAULT_CONFIG } from "../types/config";
+import { type AppConfig, DEFAULT_CONFIG } from "@/types/config";
 
 const CONFIG_FILENAME = "app-config.json";
 const DIR = BaseDirectory.AppConfig;

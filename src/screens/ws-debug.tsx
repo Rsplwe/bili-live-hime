@@ -1,5 +1,5 @@
 import { startWs, stopWs } from "@/ws/ws-client";
-import { Button } from "../components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export function WsDebug() {
   return (

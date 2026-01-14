@@ -1,7 +1,7 @@
 import { useConfigStore } from "@/store/config";
 import type { AppCookie } from "@/types/config";
 import { fetch } from "@tauri-apps/plugin-http";
-import { appSign } from "./app-sign";
+import { appSign } from "@/lib/app-sign";
 
 const USER_AGENT =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0";
