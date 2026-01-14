@@ -50,8 +50,8 @@
 
 #### Clone
 ```bash
-git clone https://github.com/yourname/bilibili-live-hime.git
-cd bilibili-live-hime
+git clone https://github.com/Rsplwe/bili-live-hime.git
+cd bili-live-hime
 npm install
 ```
 
