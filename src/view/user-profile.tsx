@@ -1,9 +1,10 @@
-import { LogOut, Copy, Check } from "lucide-react";
+import { LogOut, Copy, Check } from "@hugeicons/core-free-icons";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useConfigStore } from "@/store/config";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 interface UserProfileProps {
   onLogout: () => void;
@@ -37,7 +38,7 @@ export function UserProfile({ onLogout }: UserProfileProps) {
     <div className="space-y-4">
       <Card>
         <CardContent className="flex flex-col items-center gap-3 pt-6">
-          <Avatar className="w-20 h-20 border-1 border">
+          <Avatar className="w-20 h-20 border">
             <AvatarImage src={avatar || "/akarin.webp"} alt={username ? username : "user"} />
             <AvatarFallback className="bg-primary text-primary-foreground text-xl font-semibold">
               {(username ? username : "user").slice(0, 2).toUpperCase()}
@@ -56,12 +57,12 @@ export function UserProfile({ onLogout }: UserProfileProps) {
           <Button variant="link" size="sm" onClick={handleCopyUid} className="h-auto p-0 text-xs">
             {copied ? (
               <>
-                <Check className="w-3 h-3 mr-1" />
+                <HugeiconsIcon icon={Check} className="mr-1" />
                 已复制
               </>
             ) : (
               <>
-                <Copy className="w-3 h-3 mr-1" />
+                <HugeiconsIcon icon={Copy} className="mr-1" />
                 复制
               </>
             )}
@@ -76,12 +77,12 @@ export function UserProfile({ onLogout }: UserProfileProps) {
           <Button variant="link" size="sm" onClick={handleCopyRoomId} className="h-auto p-0 text-xs">
             {copied2 ? (
               <>
-                <Check className="w-3 h-3 mr-1" />
+                <HugeiconsIcon icon={Check} className="mr-1" />
                 已复制
               </>
             ) : (
               <>
-                <Copy className="w-3 h-3 mr-1" />
+                <HugeiconsIcon icon={Copy} className="mr-1" />
                 复制
               </>
             )}
@@ -91,7 +92,7 @@ export function UserProfile({ onLogout }: UserProfileProps) {
       </div>
 
       <Button variant="destructive" onClick={onLogout} className="w-full">
-        <LogOut className="w-4 h-4 mr-2" />
+        <HugeiconsIcon icon={LogOut} className="mr-1" />
         登出
       </Button>
     </div>

@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
-import { Play, Square, Copy, Check } from "lucide-react";
+import { Play, Square, Copy, Check } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useConfigStore } from "@/store/config";
 import type { Area, Stream } from "@/types/config";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { getLiveVersion, startLive, stopLive, updateRoomArea, updateRoomTitle } from "@/api/live";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 export function LiveStreamSettings() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -164,7 +165,7 @@ export function LiveStreamSettings() {
                 更新分区
               </LoadingButton>
             </div>
-            <div className="grid gap-4">
+            <div className="flex gap-4">
               <div className="space-y-2">
                 <Label htmlFor="category" className="text-xs text-muted-foreground">
                   分类
@@ -181,11 +182,13 @@ export function LiveStreamSettings() {
                     <SelectValue placeholder="选择分类" />
                   </SelectTrigger>
                   <SelectContent>
-                    {areaList.map((parent) => (
-                      <SelectItem key={parent.id} value={parent.id}>
-                        {parent.name}
-                      </SelectItem>
-                    ))}
+                    <SelectGroup>
+                      {areaList.map((parent) => (
+                        <SelectItem key={parent.id} value={parent.id}>
+                          {parent.name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
               </div>
@@ -206,11 +209,13 @@ export function LiveStreamSettings() {
                     <SelectValue placeholder="选择分区" />
                   </SelectTrigger>
                   <SelectContent>
-                    {childAreas.map((area) => (
-                      <SelectItem key={area.id} value={area.id}>
-                        {area.name}
-                      </SelectItem>
-                    ))}
+                    <SelectGroup>
+                      {childAreas.map((area) => (
+                        <SelectItem key={area.id} value={area.id}>
+                          {area.name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
               </div>
@@ -219,7 +224,7 @@ export function LiveStreamSettings() {
 
           <div className="flex gap-3">
             <LoadingButton onClickAsync={handleStartStream} disabled={!canStartStream} className="flex-1">
-              <Play className="w-4 h-4 mr-2" />
+              <HugeiconsIcon icon={Play} className="mr-1" />
               开始直播
             </LoadingButton>
             <LoadingButton
@@ -227,7 +232,7 @@ export function LiveStreamSettings() {
               onClickAsync={handleEndStream}
               disabled={!isOpenLive}
               className="flex-1">
-              <Square className="w-4 h-4 mr-2" />
+              <HugeiconsIcon icon={Square} className="mr-1" />
               停止直播
             </LoadingButton>
           </div>
@@ -276,9 +281,9 @@ export function LiveStreamSettings() {
                       <Input value={stream.address} readOnly className="font-mono text-xs" />
                       <Button variant="secondary" size="icon" onClick={() => handleCopy(stream.address, stream.type)}>
                         {copiedField === stream.type ? (
-                          <Check className="w-4 h-4 text-primary" />
+                          <HugeiconsIcon icon={Check} className="w-4 h-4 text-primary" />
                         ) : (
-                          <Copy className="w-4 h-4" />
+                          <HugeiconsIcon icon={Copy} className="w-4 h-4" />
                         )}
                       </Button>
                     </div>
@@ -292,9 +297,9 @@ export function LiveStreamSettings() {
                         size="icon"
                         onClick={() => handleCopy(stream.key, `${stream.type}-key`)}>
                         {copiedField === `${stream.type}-key` ? (
-                          <Check className="w-4 h-4 text-primary" />
+                          <HugeiconsIcon icon={Check} className="w-4 h-4 text-primary" />
                         ) : (
-                          <Copy className="w-4 h-4" />
+                          <HugeiconsIcon icon={Copy} className="w-4 h-4" />
                         )}
                       </Button>
                     </div>

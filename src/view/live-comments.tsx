@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Gift, Send } from "lucide-react";
+import { Gift, Send, VerticalScrollPointIcon, Link, Unlink } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { sendComment } from "@/api/live";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { toast } from "sonner";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 export function LiveComments() {
   const [newMessage, setNewMessage] = useState("");
@@ -53,7 +54,7 @@ export function LiveComments() {
     if (comment.type === "gift") {
       return (
         <div key={comment.id} className="flex items-center gap-2 py-2 px-3 bg-primary/10 rounded-lg my-1">
-          <Gift className="w-4 h-4 text-primary" />
+          <HugeiconsIcon icon={Gift} className="text-primary" />
           <span className="text-sm">
             <span className="font-medium text-primary">{comment.username}</span>
             <span className="text-muted-foreground"> 送出 </span>
@@ -80,7 +81,7 @@ export function LiveComments() {
               </Badge>
             )}
           </div>
-          <p className="text-sm text-foreground break-words">{comment.message}</p>
+          <p className="text-sm text-foreground wrap-break-word">{comment.message}</p>
         </div>
       </div>
     );
@@ -92,7 +93,8 @@ export function LiveComments() {
         <h2 className="text-xl font-semibold">直播弹幕</h2>
         <div className="flex items-center gap-2">
           <Badge variant="outline">{messages.length} 条弹幕</Badge>
-          <Button variant={autoScroll ? "default" : "outline"} size="sm" onClick={() => setAutoScroll(!autoScroll)}>
+          <Button variant={autoScroll ? "default" : "outline"} onClick={() => setAutoScroll(!autoScroll)}>
+            <HugeiconsIcon icon={VerticalScrollPointIcon} />
             自动滚动 {autoScroll ? "开" : "关"}
           </Button>
           <LoadingButton
@@ -109,7 +111,17 @@ export function LiveComments() {
                 alert("连接失败");
               }
             }}>
-            {!connected ? "连接" : "断开"}
+            {!connected ? (
+              <>
+                <HugeiconsIcon icon={Link} />
+                连接
+              </>
+            ) : (
+              <>
+                <HugeiconsIcon icon={Unlink} />
+                断开
+              </>
+            )}
           </LoadingButton>
         </div>
       </div>
@@ -130,7 +142,7 @@ export function LiveComments() {
           className="flex-1"
         />
         <LoadingButton onClickAsync={handleSendMessage} disabled={!newMessage.trim()}>
-          <Send className="w-4 h-4 mr-2" />
+          <HugeiconsIcon icon={Send} className="mr-2" />
           发送
         </LoadingButton>
       </div>

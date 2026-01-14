@@ -1,6 +1,7 @@
-import { User, Radio, MessageSquare, Settings } from "lucide-react";
+import { User, Radio, MessageSquare, Settings } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 type TabType = "account" | "stream" | "comments" | "settings";
 
@@ -30,7 +31,7 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
               "w-full justify-start gap-3 h-auto py-2.5",
               activeTab === tab.id && "bg-sidebar-accent text-sidebar-accent-foreground",
             )}>
-            <tab.icon className="w-4 h-4" />
+            <HugeiconsIcon icon={tab.icon} />
             {tab.label}
           </Button>
         ))}
@@ -45,7 +46,7 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
               "w-full justify-start gap-3 h-auto py-2.5",
               activeTab === tab.id && "bg-sidebar-accent text-sidebar-accent-foreground",
             )}>
-            <tab.icon className="w-4 h-4" />
+            <HugeiconsIcon icon={tab.icon} />
             {tab.label}
           </Button>
         ))}

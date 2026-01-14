@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import { RefreshCw, CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { RefreshCw, CheckCircle, XCircle } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from "qrcode.react";
 import { getLoginQrcode, pollQrCodeStatus } from "@/api/passport";
+import { Spinner } from "@/components/ui/spinner";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 interface QRCodeLoginProps {
   onLoginSuccess: () => void;
@@ -91,14 +93,14 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
   const getStatusIcon = () => {
     switch (qrStatus) {
       case "loading":
-        return <Loader2 className="w-4 h-4 animate-spin" />;
+        return <Spinner />;
       case "scanned":
-        return <Loader2 className="w-4 h-4 animate-spin text-primary" />;
+        return <Spinner className="text-primary" />;
       case "confirmed":
-        return <CheckCircle2 className="w-4 h-4 text-primary" />;
+        return <HugeiconsIcon icon={CheckCircle} className="text-primary" />;
       case "expired":
       case "error":
-        return <XCircle className="w-4 h-4 text-destructive" />;
+        return <HugeiconsIcon icon={XCircle} className="text-destructive" />;
       default:
         return null;
     }
@@ -106,29 +108,29 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
 
   return (
     <div className="space-y-4">
-      <div className="relative aspect-square w-full max-w-[200px] mx-auto bg-card rounded-xl border border-border overflow-hidden">
+      <div className="relative aspect-square w-full max-w-50 mx-auto bg-card rounded-xl border border-border overflow-hidden">
         {qrStatus === "loading" ? (
           <div className="absolute inset-0 flex items-center justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+            <Spinner className="w-8 h-8 text-muted-foreground" />
           </div>
         ) : qrStatus === "expired" || qrStatus === "error" ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-card/95">
-            <XCircle className="w-8 h-8 text-destructive" />
+            <HugeiconsIcon icon={XCircle} className="w-8 h-8 text-destructive" />
             <Button variant="link" size="sm" onClick={generateQRCode} className="gap-1.5">
-              <RefreshCw className="w-3.5 h-3.5" />
-              Refresh
+              <HugeiconsIcon icon={RefreshCw} className="w-3.5 h-3.5" />
+              刷新
             </Button>
           </div>
         ) : (
           <>
             <div className="absolute inset-4 bg-foreground rounded-lg p-2">
               <div className="w-full h-full bg-background rounded grid grid-cols-7 gap-0.5 p-2">
-                <QRCodeSVG value={qrCodeUrl} />
+                <QRCodeSVG size={135} value={qrCodeUrl} />
               </div>
             </div>
             {qrStatus === "scanned" && (
               <div className="absolute inset-0 flex items-center justify-center bg-card/80">
-                <CheckCircle2 className="w-12 h-12 text-primary" />
+                <HugeiconsIcon icon={CheckCircle} className="w-12 h-12 text-primary" />
               </div>
             )}
           </>
@@ -142,7 +144,7 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
 
       {(qrStatus === "pending" || qrStatus === "scanned") && (
         <Button variant="secondary" onClick={generateQRCode} className="w-full">
-          <RefreshCw className="w-4 h-4 mr-2" />
+          <HugeiconsIcon icon={RefreshCw} className="w-4 h-4 mr-2" />
           刷新二维码
         </Button>
       )}

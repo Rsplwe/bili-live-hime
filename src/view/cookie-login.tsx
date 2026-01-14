@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Loader2, AlertCircle } from "lucide-react";
+import { AlertCircle } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useConfigStore } from "@/store/config";
+import { Spinner } from "@/components/ui/spinner";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 interface CookieLoginProps {
   onLoginSuccess: () => void;
@@ -91,7 +93,7 @@ export function CookieLogin({ onLoginSuccess }: CookieLoginProps) {
 
       {error && (
         <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
+          <HugeiconsIcon icon={AlertCircle} />
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
@@ -99,7 +101,7 @@ export function CookieLogin({ onLoginSuccess }: CookieLoginProps) {
       <Button type="submit" disabled={isLoading || !cookie.trim()} className="w-full">
         {isLoading ? (
           <>
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            <Spinner />
             正在验证……
           </>
         ) : (

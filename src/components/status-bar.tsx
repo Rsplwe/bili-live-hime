@@ -1,8 +1,8 @@
-import { useEffect } from "react";
-import { Users, Wifi, WifiOff } from "lucide-react";
+import { Users, Wifi, WifiOff } from "@hugeicons/core-free-icons";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useWsStore } from "@/store/ws";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 export function StatusBar() {
   const {
@@ -10,8 +10,6 @@ export function StatusBar() {
     watchedUser,
     connected,
   } = useWsStore((s) => s);
-
-  useEffect(() => {}, []);
 
   const formatNumber = (num: number) => {
     if (num >= 10000) {
@@ -27,11 +25,11 @@ export function StatusBar() {
     <div className="h-7 border-t border-border bg-muted/50 px-4 flex items-center justify-between text-xs text-muted-foreground">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-1.5">
-          <Users className="h-3.5 w-3.5" />
+          <HugeiconsIcon icon={Users} className="h-4 w-4" />
           <span>已观看人次:</span>
           <span className="font-medium text-foreground">{formatNumber(watchedUser)}</span>
         </div>
-        <Separator orientation="vertical" className="h-3.5" />
+        <Separator orientation="vertical" className="h-4" />
         {/* 
         <div className="flex items-center gap-1.5">
           <Flame className="h-3.5 w-3.5 text-orange-500" />
@@ -40,21 +38,25 @@ export function StatusBar() {
         </div>*/}
       </div>
       <div className="flex items-center gap-2">
-        {connected ? (
-          <Badge
-            variant="outline"
-            className="h-5 gap-1 text-xs font-normal text-green-600 border-green-600/30 bg-green-500/10">
-            <Wifi className="h-3 w-3" />
-            已连接
-          </Badge>
-        ) : (
-          <Badge
-            variant="outline"
-            className="h-5 gap-1 text-xs font-normal text-destructive border-destructive/30 bg-destructive/10">
-            <WifiOff className="h-3 w-3" />
-            未连接
-          </Badge>
-        )}
+        <Badge
+          variant="outline"
+          className={
+            connected
+              ? "text-green-600 border-green-600/30 bg-green-500/10"
+              : "text-destructive border-destructive/30 bg-destructive/10"
+          }>
+          {connected ? (
+            <>
+              <HugeiconsIcon icon={Wifi} />
+              已连接
+            </>
+          ) : (
+            <>
+              <HugeiconsIcon icon={WifiOff} />
+              未连接
+            </>
+          )}
+        </Badge>
       </div>
     </div>
   );

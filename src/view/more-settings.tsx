@@ -1,4 +1,4 @@
-import { Sun, Moon, ExternalLink, Bug, FolderGit2Icon } from "lucide-react";
+import { Sun, Moon, ExternalLink, Bug, Folders } from "@hugeicons/core-free-icons";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { useConfigStore } from "@/store/config";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { Button } from "@/components/ui/button";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 export function MoreSettings() {
   const theme = useConfigStore.getState().config.theme;
@@ -17,9 +18,9 @@ export function MoreSettings() {
         <CardContent className="flex items-center justify-between py-1">
           <div className="flex items-center gap-3">
             {theme === "dark" ? (
-              <Moon className="w-5 h-5 text-muted-foreground" />
+              <HugeiconsIcon icon={Moon} className="w-5 h-5 text-muted-foreground" />
             ) : (
-              <Sun className="w-5 h-5 text-muted-foreground" />
+              <HugeiconsIcon icon={Sun} className="w-5 h-5 text-muted-foreground" />
             )}
             <div>
               <Label htmlFor="notifications" className="cursor-pointer">
@@ -43,10 +44,10 @@ export function MoreSettings() {
             openUrl("https://github.com/Rsplwe/bili-live-hime/issues");
           }}>
           <div className="flex items-center gap-3">
-            <Bug className="w-5 h-5 text-muted-foreground" />
+            <HugeiconsIcon icon={Bug} className="w-5 h-5 text-muted-foreground" />
             <span className="text-sm">报告错误</span>
           </div>
-          <ExternalLink className="w-4 h-4 text-muted-foreground" />
+          <HugeiconsIcon icon={ExternalLink} className="w-4 h-4 text-muted-foreground" />
         </Button>
         <Button
           variant="ghost"
@@ -55,10 +56,10 @@ export function MoreSettings() {
             openUrl("https://github.com/Rsplwe/bili-live-hime");
           }}>
           <div className="flex items-center gap-3">
-            <FolderGit2Icon className="w-5 h-5 text-muted-foreground" />
+            <HugeiconsIcon icon={Folders} className="w-5 h-5 text-muted-foreground" />
             <span className="text-sm">项目主页</span>
           </div>
-          <ExternalLink className="w-4 h-4 text-muted-foreground" />
+          <HugeiconsIcon icon={ExternalLink} className="w-4 h-4 text-muted-foreground" />
         </Button>
       </div>
 

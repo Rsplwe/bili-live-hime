@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Loader2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useConfigStore } from "@/store/config";
 import { getUserInfo } from "@/api/user";
 import { getAreaList, getRoomId, getRoomToken } from "@/api/live";
+import { Spinner } from "@/components/ui/spinner";
 
 interface LoadingScreenProps {
   onValidationComplete: (isValid: boolean) => void;
@@ -75,7 +75,7 @@ export function LoadingScreen({ onValidationComplete }: LoadingScreenProps) {
           <CardDescription>初始化应用</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-4">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <Spinner className="w-8 h-8 text-primary" />
           <p className="text-sm text-muted-foreground text-center">{status}</p>
         </CardContent>
       </Card>

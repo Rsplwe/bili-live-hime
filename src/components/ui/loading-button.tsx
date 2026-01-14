@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Spinner } from "@/components/ui/spinner";
 
 type LoadingButtonProps = React.ComponentProps<typeof Button> & {
   onClickAsync?: () => Promise<void>;
@@ -31,7 +31,7 @@ export function LoadingButton({
 
   return (
     <Button {...props} className={cn(className)} disabled={disabled || loading} onClick={handleClick}>
-      {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+      {loading && <Spinner />}
       {loading ? loadingText : children}
     </Button>
   );
