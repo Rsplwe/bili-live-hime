@@ -77,7 +77,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-background rounded-lg shadow-2xl overflow-hidden border border-border">
+    <div className="flex flex-col h-screen bg-background shadow-2xl overflow-hidden border border-border">
       <Navbar />
       {isInitialized ? renderContent() : <div className="flex-1 flex items-center justify-center p-8">初始化中...</div>}
       <Toaster />
