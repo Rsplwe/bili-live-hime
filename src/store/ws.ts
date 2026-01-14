@@ -4,7 +4,8 @@ import { type Comment } from "@/types/comment";
 interface WsState {
   connected: boolean;
   shouldConnect: boolean;
-  messages: Comment[];
+  regularMessages: Comment[];
+  superChats: Comment[];
   watchedUser: number;
   popularity: number;
 
@@ -20,7 +21,8 @@ interface WsState {
 export const useWsStore = create<WsState>((set) => ({
   connected: false,
   shouldConnect: false,
-  messages: [],
+  regularMessages: [],
+  superChats: [],
   watchedUser: 0,
   popularity: 0,
 
@@ -34,6 +36,7 @@ export const useWsStore = create<WsState>((set) => ({
 
   addMessage: (msg) =>
     set((state) => ({
-      messages: [...state.messages, msg],
+      regularMessages: msg.type !== "superchat" ? [...state.regularMessages, msg] : state.regularMessages,
+      superChats: msg.type === "superchat" ? [...state.superChats, msg] : state.superChats,
     })),
 }));

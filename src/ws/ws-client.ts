@@ -107,37 +107,55 @@ async function parseMessage(message: ArrayBuffer) {
   const pl = decoder.decode(message);
   const obj = JSON.parse(pl);
   console.log("parseMessage:" + pl);
-
-  if (obj["cmd"] === "DANMU_MSG") {
-    useWsStore.getState().addMessage({
-      id: String(messageId++),
-      username: obj["info"][0][15]["user"]["base"]["name"],
-      message: obj["info"][1],
-      timestamp: new Date(),
-      type: "chat",
-      avatar: obj["info"][0][15]["user"]["base"]["face"],
-    });
-  } else if (obj["cmd"] === "WATCHED_CHANGE") {
-    useWsStore.getState().setWatchedUser(obj["data"]["num"]);
-  } else if (obj["cmd"] === "INTERACT_WORD_V2") {
-    const pbObj = InteractWordV2.fromBinary(base64ToBytes(obj["data"]["pb"]));
-    useWsStore.getState().addMessage({
-      id: String(messageId++),
-      username: pbObj.uname,
-      message: "进入直播间",
-      timestamp: new Date(),
-      type: "enter",
-    });
-  } else if (obj["cmd"] === "SEND_GIFT") {
-    useWsStore.getState().addMessage({
-      id: String(messageId++),
-      username: obj["data"]["uname"],
-      message: "",
-      timestamp: new Date(),
-      type: "gift",
-      giftName: obj["data"]["giftName"],
-      giftCount: obj["data"]["num"],
-    });
+  switch (obj["cmd"]) {
+    case "DANMU_MSG":
+      useWsStore.getState().addMessage({
+        id: String(messageId++),
+        username: obj["info"][0][15]["user"]["base"]["name"],
+        message: obj["info"][1],
+        timestamp: new Date(),
+        type: "chat",
+        avatar: obj["info"][0][15]["user"]["base"]["face"],
+      });
+      break;
+    case "WATCHED_CHANGE":
+      useWsStore.getState().setWatchedUser(obj["data"]["num"]);
+      break;
+    case "INTERACT_WORD_V2": {
+      const pbObj = InteractWordV2.fromBinary(base64ToBytes(obj["data"]["pb"]));
+      useWsStore.getState().addMessage({
+        id: String(messageId++),
+        username: pbObj.uname,
+        message: "进入直播间",
+        timestamp: new Date(),
+        type: "enter",
+      });
+      break;
+    }
+    case "SEND_GIFT":
+      useWsStore.getState().addMessage({
+        id: String(messageId++),
+        username: obj["data"]["uname"],
+        message: "",
+        timestamp: new Date(),
+        type: "gift",
+        giftName: obj["data"]["giftName"],
+        giftCount: obj["data"]["num"],
+      });
+      break;
+    case "SUPER_CHAT_MESSAGE":
+      useWsStore.getState().addMessage({
+        id: String(messageId++),
+        username: obj["data"]["user_info"]["uname"],
+        avatar: obj["data"]["user_info"]["face"],
+        message: obj["data"]["message"],
+        timestamp: new Date(),
+        amount: obj["data"]["price"],
+        type: "superchat",
+      });
+      break;
+    default:
+      break;
   }
 }
 

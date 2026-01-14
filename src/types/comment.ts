@@ -4,8 +4,9 @@ export interface Comment {
   avatar?: string;
   message: string;
   timestamp: Date;
-  type: "chat" | "gift" | "enter";
+  type: "chat" | "superchat" | "gift" | "enter";
   badge?: string;
   giftName?: string;
   giftCount?: number;
+  amount?: number;
 }

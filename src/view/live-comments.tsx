@@ -14,17 +14,21 @@ import { LoadingButton } from "@/components/ui/loading-button";
 import { toast } from "sonner";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function LiveComments() {
   const [newMessage, setNewMessage] = useState("");
   const [autoScroll, setAutoScroll] = useState(true);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const messages = useWsStore((s) => s.messages);
+  const [activeTab, setActiveTab] = useState<"all" | "superchat">("all");
+
+  const regularScrollRef = useRef<HTMLDivElement>(null);
   const connected = useWsStore((s) => s.connected);
+  const superChatComments = useWsStore((s) => s.superChats);
+  const regularComments = useWsStore((s) => s.regularMessages);
 
   useEffect(() => {
-    if (autoScroll && scrollRef.current) {
-      const viewport = scrollRef.current.querySelector("[data-radix-scroll-area-viewport]");
+    if (autoScroll && regularScrollRef.current) {
+      const viewport = regularScrollRef.current.querySelector("[data-radix-scroll-area-viewport]");
       if (viewport) {
         viewport.scrollTo({
           top: viewport.scrollHeight,
@@ -32,7 +36,7 @@ export function LiveComments() {
         });
       }
     }
-  }, [messages.length, autoScroll]);
+  }, [regularComments.length, autoScroll]);
 
   const handleSendMessage = async () => {
     try {
@@ -43,7 +47,17 @@ export function LiveComments() {
     }
   };
 
-  const renderComment = (comment: Comment) => {
+  const getAmountBgColor = (amount: number): string => {
+    if (amount <= 0) return "";
+    if (amount <= 30) return "bg-blue-400";
+    if (amount <= 50) return "bg-cyan-700";
+    if (amount <= 100) return "bg-yellow-500";
+    if (amount <= 500) return "bg-orange-400";
+    if (amount <= 1000) return "bg-red-400";
+    return "bg-red-600";
+  };
+
+  const renderRegularComment = (comment: Comment) => {
     if (comment.type === "enter") {
       return (
         <div key={comment.id} className="text-xs text-muted-foreground py-1 px-2">
@@ -70,7 +84,7 @@ export function LiveComments() {
     return (
       <div key={comment.id} className="flex items-start gap-2 py-1.5 px-2 hover:bg-muted/30 rounded-md">
         <Avatar className="w-6 h-6 mt-0.5">
-          <AvatarImage src={comment.avatar || "/placeholder.svg"} />
+          <AvatarImage src={comment.avatar || "/akarin.webp"} />
           <AvatarFallback className="text-xs">{comment.username.slice(0, 2).toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
@@ -81,8 +95,33 @@ export function LiveComments() {
                 {comment.badge}
               </Badge>
             )}
+            <span className="text-xs text-muted-foreground ml-auto">
+              {comment.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            </span>
           </div>
           <p className="text-sm text-foreground wrap-break-word">{comment.message}</p>
+        </div>
+      </div>
+    );
+  };
+
+  const renderSuperChatComment = (comment: Comment) => {
+    const bgColor = getAmountBgColor(comment.amount || 0);
+    return (
+      <div key={comment.id} className={`relative overflow-hidden rounded-lg my-2 bg-linear-to-r ${bgColor} p-0.5`}>
+        <div className="bg-background/95 rounded-lg p-3">
+          <div className="flex items-center gap-2 mb-1">
+            <Avatar className="w-6 h-6">
+              <AvatarImage src={comment.avatar || "/akarin.webp"} />
+              <AvatarFallback className="text-xs">{comment.username.slice(0, 2).toUpperCase()}</AvatarFallback>
+            </Avatar>
+            <span className="font-bold text-sm">{comment.username}</span>
+            <Badge className={`bg-linear-to-r ${bgColor} text-white border-0 text-xs`}>¥{comment.amount || 0}</Badge>
+            <span className="text-xs text-muted-foreground ml-auto">
+              {comment.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            </span>
+          </div>
+          <p className="text-sm font-medium">{comment.message}</p>
         </div>
       </div>
     );
@@ -93,7 +132,7 @@ export function LiveComments() {
       <div className="flex items-center justify-between">
         <Label className="text-xl">直播弹幕</Label>
         <div className="flex items-center gap-2">
-          <Badge variant="outline">{messages.length} 条弹幕</Badge>
+          <Badge variant="outline">{regularComments.length} 条弹幕</Badge>
           <Button variant={autoScroll ? "default" : "outline"} onClick={() => setAutoScroll(!autoScroll)}>
             <HugeiconsIcon icon={VerticalScrollPointIcon} />
             自动滚动 {autoScroll ? "开" : "关"}
@@ -126,13 +165,43 @@ export function LiveComments() {
           </LoadingButton>
         </div>
       </div>
-      <Card>
-        <CardContent className="p-0" ref={scrollRef}>
-          <ScrollArea className="h-[calc(100vh-300px)] w-full">
-            <div className="p-2">{messages.map(renderComment)}</div>
-          </ScrollArea>
-        </CardContent>
-      </Card>
+
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "all" | "superchat")}>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="all" className="gap-2">
+            全部弹幕
+            <Badge variant="secondary" className="ml-1 h-5 px-1.5">
+              {regularComments.length}
+            </Badge>
+          </TabsTrigger>
+          <TabsTrigger value="superchat" className="gap-2">
+            醒目留言
+            <Badge variant="secondary" className="ml-1 h-5 px-1.5 bg-linear-to-r from-yellow-500/20 to-orange-500/20">
+              {superChatComments.length}
+            </Badge>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="all" className="mt-4">
+          <Card>
+            <CardContent className="p-0" ref={regularScrollRef}>
+              <ScrollArea className="h-[calc(100vh-360px)] w-full">
+                <div className="p-2">{regularComments.map(renderRegularComment)}</div>
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="superchat" className="mt-4">
+          <Card>
+            <CardContent className="p-0">
+              <ScrollArea className="h-[calc(100vh-360px)]">
+                <div className="p-2">{superChatComments.map(renderSuperChatComment)}</div>
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       <div className="flex gap-2">
         <Input

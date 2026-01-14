@@ -14,6 +14,7 @@ import { LoadingButton } from "@/components/ui/loading-button";
 import { getLiveVersion, startLive, stopLive, updateRoomArea, updateRoomTitle } from "@/api/live";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { Separator } from "@/components/ui/separator";
 
 export function LiveStreamSettings() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -157,7 +158,7 @@ export function LiveStreamSettings() {
               </div>
             </div>
           </div>
-
+          <Separator />
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Label>分区设置</Label>
@@ -221,7 +222,7 @@ export function LiveStreamSettings() {
               </div>
             </div>
           </div>
-
+          <Separator />
           <div className="flex gap-3">
             <LoadingButton onClickAsync={handleStartStream} disabled={!canStartStream} className="flex-1">
               <HugeiconsIcon icon={Play} className="mr-1" />
