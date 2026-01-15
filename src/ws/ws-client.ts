@@ -106,7 +106,6 @@ async function parseMessage(message: ArrayBuffer) {
   const decoder = new TextDecoder("utf-8");
   const pl = decoder.decode(message);
   const obj = JSON.parse(pl);
-  console.log("parseMessage:" + pl);
   switch (obj["cmd"]) {
     case "DANMU_MSG":
       useWsStore.getState().addMessage({
@@ -155,6 +154,7 @@ async function parseMessage(message: ArrayBuffer) {
       });
       break;
     default:
+      console.log("unknown cmd:" + pl);
       break;
   }
 }

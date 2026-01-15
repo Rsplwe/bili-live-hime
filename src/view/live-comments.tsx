@@ -3,7 +3,6 @@ import { Gift, Send, VerticalScrollPointIcon, Link, Unlink } from "@hugeicons/co
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useWsStore } from "@/store/ws";
 import { type Comment } from "@/types/comment";
@@ -15,6 +14,7 @@ import { toast } from "sonner";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { VirtualScrollArea } from "@/components/ui/virtual-scroll-area";
 
 export function LiveComments() {
   const [newMessage, setNewMessage] = useState("");
@@ -182,24 +182,20 @@ export function LiveComments() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="all" className="mt-4">
-          <Card>
-            <CardContent className="p-0" ref={regularScrollRef}>
-              <ScrollArea className="h-[calc(100vh-360px)] w-full">
-                <div className="p-2">{regularComments.map(renderRegularComment)}</div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
+        <TabsContent value="all">
+          <div className="h-[calc(100vh-310px)] w-full">
+            <VirtualScrollArea
+              autoScroll={autoScroll}
+              items={regularComments}
+              renderItem={(e) => renderRegularComment(e)}
+            />
+          </div>
         </TabsContent>
 
-        <TabsContent value="superchat" className="mt-4">
-          <Card>
-            <CardContent className="p-0">
-              <ScrollArea className="h-[calc(100vh-360px)]">
-                <div className="p-2">{superChatComments.map(renderSuperChatComment)}</div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
+        <TabsContent value="superchat">
+          <ScrollArea className="h-[calc(100vh-310px)] w-full rounded-md border">
+            <div className="p-2">{superChatComments.map(renderSuperChatComment)}</div>
+          </ScrollArea>
         </TabsContent>
       </Tabs>
 
