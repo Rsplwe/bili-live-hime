@@ -1,6 +1,5 @@
-import { AutoSizer, List, CellMeasurer, CellMeasurerCache, type ListRowRenderer } from "react-virtualized";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { useEffect, useRef } from "react";
-import "react-virtualized/styles.css";
 
 type VirtualScrollAreaProps<T> = {
   items: T[];
@@ -9,48 +8,49 @@ type VirtualScrollAreaProps<T> = {
 };
 
 export function VirtualScrollArea<T>({ items, renderItem, autoScroll = true }: VirtualScrollAreaProps<T>) {
-  const listRef = useRef<List>(null);
+  const parentRef = useRef<HTMLDivElement>(null);
 
-  const cache = new CellMeasurerCache({
-    fixedWidth: true,
-    defaultHeight: 48,
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const virtualizer = useVirtualizer({
+    count: items.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 48,
+    overscan: 6,
   });
 
   useEffect(() => {
-    if (autoScroll) {
-      listRef.current?.scrollToRow(items.length - 1);
+    if (autoScroll && items.length > 0) {
+      virtualizer.scrollToIndex(items.length - 1, {
+        align: "end",
+      });
     }
-  }, [items.length, autoScroll]);
-
-  const rowRenderer: ListRowRenderer = ({ index, key, parent, style }) => {
-    const item = items[index];
-
-    return (
-      <CellMeasurer cache={cache} columnIndex={0} rowIndex={index} parent={parent} key={key}>
-        <div style={style} className="px-1">
-          {renderItem(item)}
-        </div>
-      </CellMeasurer>
-    );
-  };
+  }, [items.length, autoScroll, virtualizer]);
 
   return (
-    <div className="h-full w-full overflow-hidden rounded-md border bg-background">
-      <AutoSizer>
-        {({ height, width }) => (
-          <List
-            className="py-2"
-            ref={listRef}
-            width={width}
-            height={height}
-            deferredMeasurementCache={cache}
-            rowHeight={cache.rowHeight}
-            rowRenderer={rowRenderer}
-            rowCount={items.length}
-            overscanRowCount={6}
-          />
-        )}
-      </AutoSizer>
+    <div ref={parentRef} className="h-full w-full overflow-auto rounded-md border bg-background">
+      <div
+        style={{
+          height: `${virtualizer.getTotalSize()}px`,
+          width: "100%",
+          position: "relative",
+        }}>
+        {virtualizer.getVirtualItems().map((virtualItem) => (
+          <div
+            key={virtualItem.key}
+            data-index={virtualItem.index}
+            ref={virtualizer.measureElement}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              transform: `translateY(${virtualItem.start}px)`,
+            }}
+            className="px-1">
+            {renderItem(items[virtualItem.index])}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
