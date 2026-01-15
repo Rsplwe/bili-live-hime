@@ -39,6 +39,7 @@ export function VirtualScrollArea<T>({ items, renderItem, autoScroll = true }: V
       <AutoSizer>
         {({ height, width }) => (
           <List
+            className="py-2"
             ref={listRef}
             width={width}
             height={height}
