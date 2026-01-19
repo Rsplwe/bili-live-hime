@@ -27,7 +27,7 @@ export function VirtualScrollArea<T>({ items, renderItem, autoScroll = true }: V
   }, [items.length, autoScroll, virtualizer]);
 
   return (
-    <div ref={parentRef} className="h-full w-full overflow-auto rounded-md border bg-background">
+    <div ref={parentRef} className="h-full w-full py-2 overflow-auto rounded-md border bg-background">
       <div
         style={{
           height: `${virtualizer.getTotalSize()}px`,
