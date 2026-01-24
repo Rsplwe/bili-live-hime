@@ -8,13 +8,17 @@ import { LiveRoomManagerBlockedWords } from "@/view/manager/live-room-manager-bl
 import { HugeiconsIcon } from "@hugeicons/react";
 
 export function LiveRoomManager() {
-  const [activeSection, setActiveSection] = useState<"admin" | "mute" | "blocked">("admin");
+  const [activeSection, setActiveSection] = useState<
+    "admin" | "mute" | "blocked"
+  >("admin");
 
   return (
     <div className="space-y-6">
       <Card>
         <CardContent>
-          <Tabs value={activeSection} onValueChange={(v) => setActiveSection(v as typeof activeSection)}>
+          <Tabs
+            value={activeSection}
+            onValueChange={(v) => setActiveSection(v as typeof activeSection)}>
             <TabsList className="grid w-full grid-cols-3 mb-4">
               <TabsTrigger value="admin" className="gap-2">
                 <HugeiconsIcon icon={Crown} className="w-4 h-4" />

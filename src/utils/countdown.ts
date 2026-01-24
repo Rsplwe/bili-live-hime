@@ -9,7 +9,10 @@ interface UseCountdownReturn {
   setTimeLeft: (time: number) => void;
 }
 
-export function useCountdown(initialTime: number, onComplete?: () => void): UseCountdownReturn {
+export function useCountdown(
+  initialTime: number,
+  onComplete?: () => void,
+): UseCountdownReturn {
   const [timeLeft, setTimeLeft] = useState<number>(initialTime);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const timerRef = useRef<number | null>(null);

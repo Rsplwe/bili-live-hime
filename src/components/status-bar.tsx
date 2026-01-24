@@ -27,7 +27,9 @@ export function StatusBar() {
         <div className="flex items-center gap-1.5">
           <HugeiconsIcon icon={Users} className="h-4 w-4" />
           <span>已观看人次:</span>
-          <span className="font-medium text-foreground">{formatNumber(watchedUser)}</span>
+          <span className="font-medium text-foreground">
+            {formatNumber(watchedUser)}
+          </span>
         </div>
         <Separator orientation="vertical" className="h-4" />
         {/* 

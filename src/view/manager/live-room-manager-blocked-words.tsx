@@ -2,7 +2,11 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { X, RefreshCw, XCircle } from "@hugeicons/core-free-icons";
 import { useEffect, useRef, useState } from "react";
-import { addBlockedWords, deleteBlockedWords, getBlockedWords } from "@/api/live";
+import {
+  addBlockedWords,
+  deleteBlockedWords,
+  getBlockedWords,
+} from "@/api/live";
 import { toast } from "sonner";
 import { LoadingButton } from "@/components/loading-button";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -82,12 +86,21 @@ export function LiveRoomManagerBlockedWords() {
       case "error":
         return (
           <div className="h-full flex flex-col items-center justify-center gap-4 p-8 text-center">
-            <HugeiconsIcon icon={XCircle} className="w-6 h-6 text-destructive" />
+            <HugeiconsIcon
+              icon={XCircle}
+              className="w-6 h-6 text-destructive"
+            />
             <div className="space-y-1">
               <p className="text-sm font-medium text-foreground">加载失败</p>
-              <p className="text-xs text-muted-foreground">网络异常或服务器错误</p>
+              <p className="text-xs text-muted-foreground">
+                网络异常或服务器错误
+              </p>
             </div>
-            <Button variant="outline" size="sm" className="gap-1.5" onClick={fetchKeywords}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              onClick={fetchKeywords}>
               <HugeiconsIcon icon={RefreshCw} className="w-4 h-4" />
               刷新
             </Button>
@@ -95,13 +108,18 @@ export function LiveRoomManagerBlockedWords() {
         );
       case "empty":
         return (
-          <div className="flex items-center justify-center h-30 text-muted-foreground text-sm">屏蔽词列表为空</div>
+          <div className="flex items-center justify-center h-30 text-muted-foreground text-sm">
+            屏蔽词列表为空
+          </div>
         );
       case "success":
         return (
           <div className="flex flex-wrap gap-2">
             {blockedWords.map((word) => (
-              <Badge key={word} variant="secondary" className="pl-3 pr-1 py-1.5 gap-1 text-sm">
+              <Badge
+                key={word}
+                variant="secondary"
+                className="pl-3 pr-1 py-1.5 gap-1 text-sm">
                 {word}
                 <button
                   onClick={() => handleRemoveBlockedWord(word)}
@@ -131,7 +149,9 @@ export function LiveRoomManagerBlockedWords() {
             onChange={(e) => setBlockedWordInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAddBlockedWord()}
           />
-          <LoadingButton onClickAsync={handleAddBlockedWord} disabled={!blockedWordInput.trim()}>
+          <LoadingButton
+            onClickAsync={handleAddBlockedWord}
+            disabled={!blockedWordInput.trim()}>
             添加
           </LoadingButton>
         </div>

@@ -1,4 +1,10 @@
-import { User, Radio, Shield, MessageSquare, Settings } from "@hugeicons/core-free-icons";
+import {
+  User,
+  Radio,
+  Shield,
+  MessageSquare,
+  Settings,
+} from "@hugeicons/core-free-icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { HugeiconsIcon } from "@hugeicons/react";

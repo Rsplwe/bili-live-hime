@@ -30,7 +30,11 @@ export function LoadingButton({
   };
 
   return (
-    <Button {...props} className={cn(className)} disabled={disabled || loading} onClick={handleClick}>
+    <Button
+      {...props}
+      className={cn(className)}
+      disabled={disabled || loading}
+      onClick={handleClick}>
       {loading && <Spinner />}
       {loading ? loadingText : children}
     </Button>

@@ -1,4 +1,10 @@
-import { writeTextFile, readTextFile, exists, BaseDirectory, mkdir } from "@tauri-apps/plugin-fs";
+import {
+  writeTextFile,
+  readTextFile,
+  exists,
+  BaseDirectory,
+  mkdir,
+} from "@tauri-apps/plugin-fs";
 import { type AppConfig, DEFAULT_CONFIG } from "@/types/config";
 
 const CONFIG_FILENAME = "app-config.json";
@@ -36,7 +42,9 @@ export class ConfigManager {
   public static async save(config: AppConfig): Promise<void> {
     try {
       await this.ensureDir();
-      await writeTextFile(CONFIG_FILENAME, JSON.stringify(config, null, 2), { baseDir: DIR });
+      await writeTextFile(CONFIG_FILENAME, JSON.stringify(config, null, 2), {
+        baseDir: DIR,
+      });
     } catch (error) {
       console.error("保存配置失败:", error);
       throw error;

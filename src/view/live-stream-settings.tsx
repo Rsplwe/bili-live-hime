@@ -4,14 +4,33 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useConfigStore } from "@/store/config";
 import type { Area, Stream } from "@/types/config";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { QRCodeSVG } from "qrcode.react";
 import { toast } from "sonner";
 import { LoadingButton } from "@/components/loading-button";
-import { getLiveVersion, startLive, stopLive, updateRoomArea, updateRoomTitle } from "@/api/live";
+import {
+  getLiveVersion,
+  startLive,
+  stopLive,
+  updateRoomArea,
+  updateRoomTitle,
+} from "@/api/live";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Separator } from "@/components/ui/separator";
@@ -23,10 +42,18 @@ export function LiveStreamSettings() {
 
   const updateConfig = useConfigStore((s) => s.updateConfig);
   const areaList = useConfigStore((s) => s.config.areaList);
-  const { roomTitle, categoryId, areaId, isOpenLive, streams } = useConfigStore((s) => s.config);
+  const { roomTitle, categoryId, areaId, isOpenLive, streams } = useConfigStore(
+    (s) => s.config,
+  );
 
-  const selectedParent = useMemo(() => areaList.find((p) => p.id === categoryId), [areaList, categoryId]);
-  const childAreas: Area[] = useMemo(() => selectedParent?.list ?? [], [selectedParent]);
+  const selectedParent = useMemo(
+    () => areaList.find((p) => p.id === categoryId),
+    [areaList, categoryId],
+  );
+  const childAreas: Area[] = useMemo(
+    () => selectedParent?.list ?? [],
+    [selectedParent],
+  );
   const isTitleValid = useMemo(() => {
     return roomTitle.trim() !== "";
   }, [roomTitle]);
@@ -152,7 +179,10 @@ export function LiveStreamSettings() {
                   placeholder="请输入您的直播标题……"
                   className="flex-1"
                 />
-                <LoadingButton variant="outline" onClickAsync={handleUpdateTitle} disabled={!isTitleValid}>
+                <LoadingButton
+                  variant="outline"
+                  onClickAsync={handleUpdateTitle}
+                  disabled={!isTitleValid}>
                   更新标题
                 </LoadingButton>
               </div>
@@ -162,13 +192,19 @@ export function LiveStreamSettings() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Label>分区设置</Label>
-              <LoadingButton variant="outline" size="sm" disabled={!isAreaValid} onClickAsync={handleUpdateArea}>
+              <LoadingButton
+                variant="outline"
+                size="sm"
+                disabled={!isAreaValid}
+                onClickAsync={handleUpdateArea}>
                 更新分区
               </LoadingButton>
             </div>
             <div className="flex gap-4">
               <div className="space-y-2">
-                <Label htmlFor="category" className="text-xs text-muted-foreground">
+                <Label
+                  htmlFor="category"
+                  className="text-xs text-muted-foreground">
                   分类
                 </Label>
                 <Select
@@ -224,7 +260,10 @@ export function LiveStreamSettings() {
           </div>
           <Separator />
           <div className="flex gap-3">
-            <LoadingButton onClickAsync={handleStartStream} disabled={!canStartStream} className="flex-1">
+            <LoadingButton
+              onClickAsync={handleStartStream}
+              disabled={!canStartStream}
+              className="flex-1">
               <HugeiconsIcon icon={Play} className="mr-1" />
               开始直播
             </LoadingButton>
@@ -244,7 +283,8 @@ export function LiveStreamSettings() {
           <DialogHeader>
             <DialogTitle>验证</DialogTitle>
             <DialogDescription>
-              本次开播需要身份验证，请使用哔哩哔哩 App 扫码完成验证。扫码完成后，请手动关闭此对话框。
+              本次开播需要身份验证，请使用哔哩哔哩 App
+              扫码完成验证。扫码完成后，请手动关闭此对话框。
             </DialogDescription>
           </DialogHeader>
           <div className="flex items-center gap-2">
@@ -275,14 +315,29 @@ export function LiveStreamSettings() {
                 ))}
               </TabsList>
               {streams.map((stream) => (
-                <TabsContent key={stream.type} value={stream.type} className="space-y-3 mt-0">
+                <TabsContent
+                  key={stream.type}
+                  value={stream.type}
+                  className="space-y-3 mt-0">
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-muted-foreground">服务器地址</Label>
+                    <Label className="text-xs text-muted-foreground">
+                      服务器地址
+                    </Label>
                     <div className="flex items-center gap-2">
-                      <Input value={stream.address} readOnly className="font-mono text-xs" />
-                      <Button variant="secondary" size="icon" onClick={() => handleCopy(stream.address, stream.type)}>
+                      <Input
+                        value={stream.address}
+                        readOnly
+                        className="font-mono text-xs"
+                      />
+                      <Button
+                        variant="secondary"
+                        size="icon"
+                        onClick={() => handleCopy(stream.address, stream.type)}>
                         {copiedField === stream.type ? (
-                          <HugeiconsIcon icon={Check} className="w-4 h-4 text-primary" />
+                          <HugeiconsIcon
+                            icon={Check}
+                            className="w-4 h-4 text-primary"
+                          />
                         ) : (
                           <HugeiconsIcon icon={Copy} className="w-4 h-4" />
                         )}
@@ -290,15 +345,26 @@ export function LiveStreamSettings() {
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-muted-foreground">流密钥</Label>
+                    <Label className="text-xs text-muted-foreground">
+                      流密钥
+                    </Label>
                     <div className="flex items-center gap-2">
-                      <Input value={stream.key} readOnly className="font-mono text-xs" />
+                      <Input
+                        value={stream.key}
+                        readOnly
+                        className="font-mono text-xs"
+                      />
                       <Button
                         variant="secondary"
                         size="icon"
-                        onClick={() => handleCopy(stream.key, `${stream.type}-key`)}>
+                        onClick={() =>
+                          handleCopy(stream.key, `${stream.type}-key`)
+                        }>
                         {copiedField === `${stream.type}-key` ? (
-                          <HugeiconsIcon icon={Check} className="w-4 h-4 text-primary" />
+                          <HugeiconsIcon
+                            icon={Check}
+                            className="w-4 h-4 text-primary"
+                          />
                         ) : (
                           <HugeiconsIcon icon={Copy} className="w-4 h-4" />
                         )}

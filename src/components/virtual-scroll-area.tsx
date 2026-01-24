@@ -7,7 +7,11 @@ type VirtualScrollAreaProps<T> = {
   autoScroll?: boolean;
 };
 
-export function VirtualScrollArea<T>({ items, renderItem, autoScroll = true }: VirtualScrollAreaProps<T>) {
+export function VirtualScrollArea<T>({
+  items,
+  renderItem,
+  autoScroll = true,
+}: VirtualScrollAreaProps<T>) {
   const parentRef = useRef<HTMLDivElement>(null);
 
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -27,7 +31,9 @@ export function VirtualScrollArea<T>({ items, renderItem, autoScroll = true }: V
   }, [items.length, autoScroll, virtualizer]);
 
   return (
-    <div ref={parentRef} className="h-full w-full py-2 overflow-auto rounded-md border bg-background">
+    <div
+      ref={parentRef}
+      className="h-full w-full py-2 overflow-auto rounded-md border bg-background">
       <div
         style={{
           height: `${virtualizer.getTotalSize()}px`,

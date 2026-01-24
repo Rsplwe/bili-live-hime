@@ -91,19 +91,25 @@ interface RoomSilent {
 }
 
 export async function getRoomId(uid: number): Promise<RoomId> {
-  return request<RoomId>(`https://api.live.bilibili.com/room/v2/Room/room_id_by_uid?uid=${uid}`, {
-    headers: {
-      Origin: "https://api.live.bilibili.com",
+  return request<RoomId>(
+    `https://api.live.bilibili.com/room/v2/Room/room_id_by_uid?uid=${uid}`,
+    {
+      headers: {
+        Origin: "https://api.live.bilibili.com",
+      },
     },
-  });
+  );
 }
 
 export async function getAreaList(): Promise<ParentArea[]> {
-  return request<ParentArea[]>("https://api.live.bilibili.com/room/v1/Area/getList?show_pinyin=1", {
-    headers: {
-      Origin: "https://api.live.bilibili.com",
+  return request<ParentArea[]>(
+    "https://api.live.bilibili.com/room/v1/Area/getList?show_pinyin=1",
+    {
+      headers: {
+        Origin: "https://api.live.bilibili.com",
+      },
     },
-  });
+  );
 }
 
 export async function getRoomToken(roomId: number): Promise<RoomTokenInfo> {
@@ -111,12 +117,15 @@ export async function getRoomToken(roomId: number): Promise<RoomTokenInfo> {
   //type=0&web_location=444.8
   const query = encWbi({ id: roomId, type: 0 }, config.img_url, config.sub_url);
   console.log(query);
-  return request<RoomTokenInfo>(`https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?${query}`, {
-    headers: {
-      origin: "https://live.bilibili.com",
-      referer: "https://live.bilibili.com/",
+  return request<RoomTokenInfo>(
+    `https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?${query}`,
+    {
+      headers: {
+        origin: "https://live.bilibili.com",
+        referer: "https://live.bilibili.com/",
+      },
     },
-  });
+  );
 }
 
 export async function getLiveVersion(): Promise<LiveVersion> {
@@ -168,7 +177,10 @@ export async function updateRoomArea(areaId: string): Promise<[]> {
   });
 }
 
-export async function startLive(version: string, build: string): Promise<StartLive> {
+export async function startLive(
+  version: string,
+  build: string,
+): Promise<StartLive> {
   const state = useConfigStore.getState();
   return request<StartLive>(
     `https://api.live.bilibili.com/room/v1/Room/startLive`,
@@ -212,7 +224,11 @@ export async function stopLive(): Promise<[]> {
 
 export async function sendComment(comment: string): Promise<[]> {
   const state = useConfigStore.getState();
-  const query = encWbi({ web_location: 444.8 }, state.config.img_url, state.config.sub_url);
+  const query = encWbi(
+    { web_location: 444.8 },
+    state.config.img_url,
+    state.config.sub_url,
+  );
   console.log(query);
   return request<[]>(`https://api.live.bilibili.com/msg/send?${query}`, {
     method: "POST",
@@ -244,129 +260,157 @@ export async function getRoomAdmins(page: number): Promise<RoomAdmins> {
 
 export async function addRoomAdmin(id: string): Promise<object> {
   const csrf = useConfigStore.getState().getCookie("bili_jct") || "";
-  return request<object>(`https://api.live.bilibili.com/xlive/web-ucenter/v1/roomAdmin/appoint`, {
-    method: "POST",
-    headers: {
-      origin: "https://live.bilibili.com",
+  return request<object>(
+    `https://api.live.bilibili.com/xlive/web-ucenter/v1/roomAdmin/appoint`,
+    {
+      method: "POST",
+      headers: {
+        origin: "https://live.bilibili.com",
+      },
+      data: {
+        admin: id,
+        admin_level: "1",
+        csrf_token: csrf,
+        csrf: csrf,
+        visit_id: "",
+      },
     },
-    data: {
-      admin: id,
-      admin_level: "1",
-      csrf_token: csrf,
-      csrf: csrf,
-      visit_id: "",
-    },
-  });
+  );
 }
 
 export async function deleteRoomAdmin(id: string): Promise<object> {
   const csrf = useConfigStore.getState().getCookie("bili_jct") || "";
-  return request<object>(`https://api.live.bilibili.com/xlive/app-ucenter/v1/roomAdmin/dismiss`, {
-    method: "POST",
-    headers: {
-      origin: "https://api.live.bilibili.com",
+  return request<object>(
+    `https://api.live.bilibili.com/xlive/app-ucenter/v1/roomAdmin/dismiss`,
+    {
+      method: "POST",
+      headers: {
+        origin: "https://api.live.bilibili.com",
+      },
+      data: {
+        uid: id,
+        csrf_token: csrf,
+        csrf: csrf,
+        visit_id: "",
+      },
     },
-    data: {
-      uid: id,
-      csrf_token: csrf,
-      csrf: csrf,
-      visit_id: "",
-    },
-  });
+  );
 }
 
 export async function getSilentUserList(page: number): Promise<SilentUser> {
   const roomId = useConfigStore.getState().config.roomId;
   const csrf = useConfigStore.getState().getCookie("bili_jct") || "";
-  return request<SilentUser>(`https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/GetSilentUserList`, {
-    method: "POST",
-    headers: {
-      origin: "https://api.live.bilibili.com",
+  return request<SilentUser>(
+    `https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/GetSilentUserList`,
+    {
+      method: "POST",
+      headers: {
+        origin: "https://api.live.bilibili.com",
+      },
+      data: {
+        room_id: `${roomId}`,
+        ps: `${page}`,
+        csrf_token: csrf,
+        csrf: csrf,
+        visit_id: "",
+      },
     },
-    data: {
-      room_id: `${roomId}`,
-      ps: `${page}`,
-      csrf_token: csrf,
-      csrf: csrf,
-      visit_id: "",
-    },
-  });
+  );
 }
 
 export async function searchUsers(search: string): Promise<SearchUser> {
-  return request<SearchUser>(`https://api.live.bilibili.com/banned_service/v2/Silent/search_user?search=${search}`, {
-    headers: {
-      origin: "https://api.live.bilibili.com",
+  return request<SearchUser>(
+    `https://api.live.bilibili.com/banned_service/v2/Silent/search_user?search=${search}`,
+    {
+      headers: {
+        origin: "https://api.live.bilibili.com",
+      },
     },
-  });
+  );
 }
 
 export async function addSilentUser(id: string, time: string): Promise<object> {
   const roomId = useConfigStore.getState().config.roomId;
   const csrf = useConfigStore.getState().getCookie("bili_jct") || "";
-  return request<object>(`https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/AddSilentUser`, {
-    method: "POST",
-    headers: {
-      origin: "https://api.live.bilibili.com",
+  return request<object>(
+    `https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/AddSilentUser`,
+    {
+      method: "POST",
+      headers: {
+        origin: "https://api.live.bilibili.com",
+      },
+      data: {
+        room_id: `${roomId}`,
+        tuid: id,
+        mobile_app: "web",
+        hour: time,
+        csrf_token: csrf,
+        csrf: csrf,
+        visit_id: "",
+      },
     },
-    data: {
-      room_id: `${roomId}`,
-      tuid: id,
-      mobile_app: "web",
-      hour: time,
-      csrf_token: csrf,
-      csrf: csrf,
-      visit_id: "",
-    },
-  });
+  );
 }
 
 export async function deleteSilentUser(id: string): Promise<object> {
   const roomId = useConfigStore.getState().config.roomId;
   const csrf = useConfigStore.getState().getCookie("bili_jct") || "";
-  return request<object>(`https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/DelSilentUser`, {
-    method: "POST",
-    headers: {
-      origin: "https://api.live.bilibili.com",
+  return request<object>(
+    `https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/DelSilentUser`,
+    {
+      method: "POST",
+      headers: {
+        origin: "https://api.live.bilibili.com",
+      },
+      data: {
+        room_id: `${roomId}`,
+        tuid: id,
+        mobi_app: "web",
+        csrf_token: csrf,
+        csrf: csrf,
+        visit_id: "",
+      },
     },
-    data: {
-      room_id: `${roomId}`,
-      tuid: id,
-      mobi_app: "web",
-      csrf_token: csrf,
-      csrf: csrf,
-      visit_id: "",
-    },
-  });
+  );
 }
 
 export async function getRoomSilent(): Promise<RoomSilent> {
   const roomId = useConfigStore.getState().config.roomId;
-  return request<RoomSilent>(`https://api.live.bilibili.com/xlive/web-room/v1/banned/GetRoomSilent?room_id=${roomId}`, {
-    headers: {
-      origin: "https://api.live.bilibili.com",
+  return request<RoomSilent>(
+    `https://api.live.bilibili.com/xlive/web-room/v1/banned/GetRoomSilent?room_id=${roomId}`,
+    {
+      headers: {
+        origin: "https://api.live.bilibili.com",
+      },
     },
-  });
+  );
 }
 
-export async function setRoomSilent(type: RoomSilentType, level: number = 1, minute: number = 0): Promise<object> {
+export async function setRoomSilent(
+  type: RoomSilentType,
+  level: number = 1,
+  minute: number = 0,
+): Promise<object> {
   const roomId = useConfigStore.getState().config.roomId;
   const csrf = useConfigStore.getState().getCookie("bili_jct") || "";
-  return request<object>(`https://api.live.bilibili.com/xlive/web-room/v1/banned/RoomSilent`, {
-    method: "POST",
-    headers: {
-      origin: "https://api.live.bilibili.com",
+  return request<object>(
+    `https://api.live.bilibili.com/xlive/web-room/v1/banned/RoomSilent`,
+    {
+      method: "POST",
+      headers: {
+        origin: "https://api.live.bilibili.com",
+      },
+      data: {
+        room_id: `${roomId}`,
+        type: type,
+        level: String(level),
+        minute: String(minute),
+        csrf_token: csrf,
+        csrf: csrf,
+        visit_id: "",
+      },
     },
-    data: {
-      room_id: `${roomId}`,
-      type: type,
-      level: String(level),
-      minute: String(minute),
-      csrf_token: csrf,
-      csrf: csrf,
-      visit_id: "",
-    },
-  });
+  );
 }
 
 interface KeywordList {
@@ -379,52 +423,61 @@ interface KeywordList {
 export async function getBlockedWords(): Promise<KeywordList> {
   const roomId = useConfigStore.getState().config.roomId;
   const csrf = useConfigStore.getState().getCookie("bili_jct") || "";
-  return request<KeywordList>(`https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/GetShieldKeywordList`, {
-    method: "POST",
-    headers: {
-      origin: "https://api.live.bilibili.com",
+  return request<KeywordList>(
+    `https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/GetShieldKeywordList`,
+    {
+      method: "POST",
+      headers: {
+        origin: "https://api.live.bilibili.com",
+      },
+      data: {
+        room_id: `${roomId}`,
+        csrf_token: csrf,
+        csrf: csrf,
+        visit_id: "",
+      },
     },
-    data: {
-      room_id: `${roomId}`,
-      csrf_token: csrf,
-      csrf: csrf,
-      visit_id: "",
-    },
-  });
+  );
 }
 
 export async function addBlockedWords(keyword: string): Promise<object> {
   const roomId = useConfigStore.getState().config.roomId;
   const csrf = useConfigStore.getState().getCookie("bili_jct") || "";
-  return request<object>(`https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/AddShieldKeyword`, {
-    method: "POST",
-    headers: {
-      origin: "https://api.live.bilibili.com",
+  return request<object>(
+    `https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/AddShieldKeyword`,
+    {
+      method: "POST",
+      headers: {
+        origin: "https://api.live.bilibili.com",
+      },
+      data: {
+        room_id: `${roomId}`,
+        keyword: keyword,
+        csrf_token: csrf,
+        csrf: csrf,
+        visit_id: "",
+      },
     },
-    data: {
-      room_id: `${roomId}`,
-      keyword: keyword,
-      csrf_token: csrf,
-      csrf: csrf,
-      visit_id: "",
-    },
-  });
+  );
 }
 
 export async function deleteBlockedWords(keyword: string): Promise<object> {
   const roomId = useConfigStore.getState().config.roomId;
   const csrf = useConfigStore.getState().getCookie("bili_jct") || "";
-  return request<object>(`https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/DelShieldKeyword`, {
-    method: "POST",
-    headers: {
-      origin: "https://api.live.bilibili.com",
+  return request<object>(
+    `https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/DelShieldKeyword`,
+    {
+      method: "POST",
+      headers: {
+        origin: "https://api.live.bilibili.com",
+      },
+      data: {
+        room_id: `${roomId}`,
+        keyword: keyword,
+        csrf_token: csrf,
+        csrf: csrf,
+        visit_id: "",
+      },
     },
-    data: {
-      room_id: `${roomId}`,
-      keyword: keyword,
-      csrf_token: csrf,
-      csrf: csrf,
-      visit_id: "",
-    },
-  });
+  );
 }

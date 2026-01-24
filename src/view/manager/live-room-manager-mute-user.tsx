@@ -14,14 +14,28 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { addSilentUser, deleteSilentUser, getSilentUserList, searchUsers } from "@/api/live";
+import {
+  addSilentUser,
+  deleteSilentUser,
+  getSilentUserList,
+  searchUsers,
+} from "@/api/live";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UserSelectDialog, type UserSelectItem } from "@/components/user-select-dialog";
+import {
+  UserSelectDialog,
+  type UserSelectItem,
+} from "@/components/user-select-dialog";
 import { LoadingButton } from "@/components/loading-button";
 import { Spinner } from "@/components/ui/spinner";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { RefreshCw, XCircle, Calendar, Clock, UserX } from "@hugeicons/core-free-icons";
+import {
+  RefreshCw,
+  XCircle,
+  Calendar,
+  Clock,
+  UserX,
+} from "@hugeicons/core-free-icons";
 
 interface MutedUser {
   tuid: number; // 被封禁用户 UID
@@ -67,7 +81,10 @@ export function LiveRoomManagerMuteUser() {
   const [mutedUsers, setMutedUsers] = useState<MutedUser[]>([]);
   const [muteInput, setMuteInput] = useState("");
   // const [muteDuration, setMuteDuration] = useState<MuteDurationKey>("CURRENT");
-  const [pendingMute, setPendingMute] = useState<{ id: string; username: string } | null>(null);
+  const [pendingMute, setPendingMute] = useState<{
+    id: string;
+    username: string;
+  } | null>(null);
   const [confirmMuteDialog, setConfirmMuteDialog] = useState(false);
 
   const [revokeMuteUser, setRevokeMuteUser] = useState<MutedUser | null>(null);
@@ -82,7 +99,10 @@ export function LiveRoomManagerMuteUser() {
         pagePromises.push(getSilentUserList(page));
       }
       const remainingPages = await Promise.all(pagePromises);
-      const combinedData = [...(firstPage.data ?? []), ...remainingPages.flatMap((p) => p.data ?? [])];
+      const combinedData = [
+        ...(firstPage.data ?? []),
+        ...remainingPages.flatMap((p) => p.data ?? []),
+      ];
       setMutedUsers(combinedData);
       if (combinedData.length > 0) {
         setState("success");
@@ -166,12 +186,21 @@ export function LiveRoomManagerMuteUser() {
       case "error":
         return (
           <div className="h-full flex flex-col items-center justify-center gap-4 p-8 text-center">
-            <HugeiconsIcon icon={XCircle} className="w-6 h-6 text-destructive" />
+            <HugeiconsIcon
+              icon={XCircle}
+              className="w-6 h-6 text-destructive"
+            />
             <div className="space-y-1">
               <p className="text-sm font-medium text-foreground">加载失败</p>
-              <p className="text-xs text-muted-foreground">网络异常或服务器错误</p>
+              <p className="text-xs text-muted-foreground">
+                网络异常或服务器错误
+              </p>
             </div>
-            <Button variant="outline" size="sm" className="gap-1.5" onClick={fetchAllMutedUsers}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              onClick={fetchAllMutedUsers}>
               <HugeiconsIcon icon={RefreshCw} className="w-4 h-4" />
               刷新
             </Button>
@@ -187,15 +216,22 @@ export function LiveRoomManagerMuteUser() {
         return (
           <div className="divide-y">
             {mutedUsers.map((user) => (
-              <div key={user.tuid} className="flex items-center justify-between hover:bg-muted/30 p-3 gap-4">
+              <div
+                key={user.tuid}
+                className="flex items-center justify-between hover:bg-muted/30 p-3 gap-4">
                 <div className="flex items-start gap-3">
                   <Avatar className="w-8 h-8">
                     <AvatarImage src={user.face || "/akarin.webp"} />
-                    <AvatarFallback className="text-xs">{user.tname.slice(0, 2).toUpperCase()}</AvatarFallback>
+                    <AvatarFallback className="text-xs">
+                      {user.tname.slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="space-y-0.5">
                     <p className="font-medium text-sm">
-                      {user.tname} <span className="text-muted-foreground">(UID: {user.tuid})</span>
+                      {user.tname}{" "}
+                      <span className="text-muted-foreground">
+                        (UID: {user.tuid})
+                      </span>
                     </p>
                     <p className="text-xs text-muted-foreground flex items-center">
                       <HugeiconsIcon icon={Clock} className="w-3 h-3 mr-1" />
@@ -251,7 +287,9 @@ export function LiveRoomManagerMuteUser() {
             </SelectContent>
           </Select>
           */}
-          <LoadingButton onClickAsync={handleMuteUser} disabled={!muteInput.trim()}>
+          <LoadingButton
+            onClickAsync={handleMuteUser}
+            disabled={!muteInput.trim()}>
             禁言
           </LoadingButton>
         </div>
@@ -261,7 +299,9 @@ export function LiveRoomManagerMuteUser() {
         <div className="flex items-center justify-between">
           <Label>已禁言用户</Label>
         </div>
-        <ScrollArea className="h-[calc(100vh-420px)] border rounded-md">{content()}</ScrollArea>
+        <ScrollArea className="h-[calc(100vh-420px)] border rounded-md">
+          {content()}
+        </ScrollArea>
       </div>
 
       <UserSelectDialog
@@ -294,11 +334,15 @@ export function LiveRoomManagerMuteUser() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>取消</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmMuteUser}>确认</AlertDialogAction>
+            <AlertDialogAction onClick={confirmMuteUser}>
+              确认
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      <AlertDialog open={revokeMuteUserDialog} onOpenChange={setRevokeMuteDialog}>
+      <AlertDialog
+        open={revokeMuteUserDialog}
+        onOpenChange={setRevokeMuteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>撤销禁言</AlertDialogTitle>
@@ -312,7 +356,9 @@ export function LiveRoomManagerMuteUser() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>取消</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmRevokeMute}>确认</AlertDialogAction>
+            <AlertDialogAction onClick={confirmRevokeMute}>
+              确认
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

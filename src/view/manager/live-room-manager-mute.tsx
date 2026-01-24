@@ -6,7 +6,9 @@ import { LiveRoomManagerMuteGlobal } from "@/view/manager/live-room-manager-mute
 export function LiveRoomManagerMute() {
   const [muteTab, setMuteTab] = useState<"list" | "global">("list");
   return (
-    <Tabs value={muteTab} onValueChange={(v) => setMuteTab(v as "list" | "global")}>
+    <Tabs
+      value={muteTab}
+      onValueChange={(v) => setMuteTab(v as "list" | "global")}>
       <TabsList className="w-full">
         <TabsTrigger value="list" className="flex-1">
           禁言名单管理

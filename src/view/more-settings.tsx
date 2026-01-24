@@ -1,4 +1,10 @@
-import { Sun, Moon, ExternalLink, Bug, Folders } from "@hugeicons/core-free-icons";
+import {
+  Sun,
+  Moon,
+  ExternalLink,
+  Bug,
+  Folders,
+} from "@hugeicons/core-free-icons";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,9 +24,15 @@ export function MoreSettings() {
         <CardContent className="flex items-center justify-between py-1">
           <div className="flex items-center gap-3">
             {theme === "dark" ? (
-              <HugeiconsIcon icon={Moon} className="w-5 h-5 text-muted-foreground" />
+              <HugeiconsIcon
+                icon={Moon}
+                className="w-5 h-5 text-muted-foreground"
+              />
             ) : (
-              <HugeiconsIcon icon={Sun} className="w-5 h-5 text-muted-foreground" />
+              <HugeiconsIcon
+                icon={Sun}
+                className="w-5 h-5 text-muted-foreground"
+              />
             )}
             <div>
               <Label htmlFor="notifications" className="cursor-pointer">
@@ -32,7 +44,9 @@ export function MoreSettings() {
           <Switch
             id="notifications"
             checked={theme === "dark"}
-            onCheckedChange={(checked) => updateConfig({ theme: checked ? "dark" : "light" })}
+            onCheckedChange={(checked) =>
+              updateConfig({ theme: checked ? "dark" : "light" })
+            }
           />
         </CardContent>
       </Card>
@@ -44,10 +58,16 @@ export function MoreSettings() {
             openUrl("https://github.com/Rsplwe/bili-live-hime/issues");
           }}>
           <div className="flex items-center gap-3">
-            <HugeiconsIcon icon={Bug} className="w-5 h-5 text-muted-foreground" />
+            <HugeiconsIcon
+              icon={Bug}
+              className="w-5 h-5 text-muted-foreground"
+            />
             <span className="text-sm">报告错误</span>
           </div>
-          <HugeiconsIcon icon={ExternalLink} className="w-4 h-4 text-muted-foreground" />
+          <HugeiconsIcon
+            icon={ExternalLink}
+            className="w-4 h-4 text-muted-foreground"
+          />
         </Button>
         <Button
           variant="ghost"
@@ -56,10 +76,16 @@ export function MoreSettings() {
             openUrl("https://github.com/Rsplwe/bili-live-hime");
           }}>
           <div className="flex items-center gap-3">
-            <HugeiconsIcon icon={Folders} className="w-5 h-5 text-muted-foreground" />
+            <HugeiconsIcon
+              icon={Folders}
+              className="w-5 h-5 text-muted-foreground"
+            />
             <span className="text-sm">项目主页</span>
           </div>
-          <HugeiconsIcon icon={ExternalLink} className="w-4 h-4 text-muted-foreground" />
+          <HugeiconsIcon
+            icon={ExternalLink}
+            className="w-4 h-4 text-muted-foreground"
+          />
         </Button>
       </div>
 

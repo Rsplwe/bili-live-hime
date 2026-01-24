@@ -42,7 +42,8 @@ export async function request<T>(
   };
 
   if (options.data && method !== "GET") {
-    (headers as Record<string, string>)["Content-Type"] = "application/x-www-form-urlencoded; charset=UTF-8";
+    (headers as Record<string, string>)["Content-Type"] =
+      "application/x-www-form-urlencoded; charset=UTF-8";
     if (requireSign) {
       fetchOptions.body = appSign(options.data);
     } else {
@@ -77,7 +78,9 @@ export async function request<T>(
     return data;
   }
   if (data.code !== 0 || data.data === null) {
-    throw new Error(`API Request Error: ${data.message || "Unknown Error"} (${data.code})`);
+    throw new Error(
+      `API Request Error: ${data.message || "Unknown Error"} (${data.code})`,
+    );
   }
   return data.data;
 }

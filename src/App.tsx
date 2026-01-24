@@ -54,7 +54,9 @@ export default function App() {
       case "ws":
         return <WsDebug />;
       case "loading":
-        return <LoadingScreen onValidationComplete={handleValidationComplete} />;
+        return (
+          <LoadingScreen onValidationComplete={handleValidationComplete} />
+        );
       case "login":
         return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
       case "authenticated":
@@ -64,7 +66,9 @@ export default function App() {
               <AppSidebar activeTab={activeTab} onTabChange={setActiveTab} />
               <main className="flex-1 p-8 overflow-y-auto">
                 <div className="max-w-2xl mx-auto">
-                  {activeTab === "account" && <UserProfile onLogout={handleLogout} />}
+                  {activeTab === "account" && (
+                    <UserProfile onLogout={handleLogout} />
+                  )}
                   {activeTab === "stream" && <LiveStreamSettings />}
                   {activeTab === "comments" && <LiveComments />}
                   {activeTab === "manager" && <LiveRoomManager />}
@@ -81,7 +85,13 @@ export default function App() {
   return (
     <div className="flex flex-col h-screen bg-background shadow-2xl overflow-hidden border border-border">
       <Navbar />
-      {isInitialized ? renderContent() : <div className="flex-1 flex items-center justify-center p-8">初始化中...</div>}
+      {isInitialized ? (
+        renderContent()
+      ) : (
+        <div className="flex-1 flex items-center justify-center p-8">
+          初始化中...
+        </div>
+      )}
       <Toaster />
     </div>
   );

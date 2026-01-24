@@ -22,7 +22,8 @@ const PROTOCOL_VERSION = {
   COMPRESSED_BROTLI: 3,
 } as const;
 
-type PROTOCOL_VERSION_TYPE = (typeof PROTOCOL_VERSION)[keyof typeof PROTOCOL_VERSION];
+type PROTOCOL_VERSION_TYPE =
+  (typeof PROTOCOL_VERSION)[keyof typeof PROTOCOL_VERSION];
 
 const OPCODE = {
   HEADERBEAT: 2,
@@ -42,7 +43,11 @@ interface PacketHeader {
   sequence: number;
 }
 
-function createHeader(bodySize: number, protocolVersion: number, opcode: number): Uint8Array {
+function createHeader(
+  bodySize: number,
+  protocolVersion: number,
+  opcode: number,
+): Uint8Array {
   const header = new Uint8Array(HEADER_SIZE);
   const view = new DataView(header.buffer);
   const totalSize = HEADER_SIZE + bodySize;
@@ -61,7 +66,8 @@ function createPacket(
   protocolVersion: PROTOCOL_VERSION_TYPE,
   opcode: OPCODE_TYPE,
 ): Uint8Array {
-  const bodyBuffer = typeof body === "string" ? new TextEncoder().encode(body) : body;
+  const bodyBuffer =
+    typeof body === "string" ? new TextEncoder().encode(body) : body;
 
   const header = createHeader(bodyBuffer.length, protocolVersion, opcode);
 
@@ -193,7 +199,11 @@ function sendAuth() {
     key: configState.roomToken,
   });
   console.log(auth_payload);
-  const authPacket = createPacket(auth_payload, PROTOCOL_VERSION.AUTH_HEARTBEAT, OPCODE.AUTH);
+  const authPacket = createPacket(
+    auth_payload,
+    PROTOCOL_VERSION.AUTH_HEARTBEAT,
+    OPCODE.AUTH,
+  );
   ws?.send(authPacket);
 }
 
@@ -202,7 +212,11 @@ function startHeartbeat() {
 
   heartbeatTimer = window.setInterval(() => {
     if (ws?.readyState === WebSocket.OPEN) {
-      const headbeartPack = createPacket("Ciallo~", PROTOCOL_VERSION.AUTH_HEARTBEAT, OPCODE.HEADERBEAT);
+      const headbeartPack = createPacket(
+        "Ciallo~",
+        PROTOCOL_VERSION.AUTH_HEARTBEAT,
+        OPCODE.HEADERBEAT,
+      );
       ws.send(headbeartPack);
     }
   }, HEARTBEAT_INTERVAL);

@@ -43,7 +43,9 @@ export function LiveRoomManagerAdmins() {
   const [revokeAdminDialog, setRevokeAdminDialog] = useState(false);
 
   const [pendingAddAdmin, setPendingAddAdmin] = useState<string>("");
-  const [pendingRevokeAdmin, setPendingRevokeAdmin] = useState<Admin | null>(null);
+  const [pendingRevokeAdmin, setPendingRevokeAdmin] = useState<Admin | null>(
+    null,
+  );
 
   const fetchAllAdmins = async () => {
     try {
@@ -56,7 +58,10 @@ export function LiveRoomManagerAdmins() {
         pagePromises.push(getRoomAdmins(page));
       }
       const remainingPages = await Promise.all(pagePromises);
-      const combinedData = [...(firstPage.data ?? []), ...remainingPages.flatMap((p) => p.data ?? [])];
+      const combinedData = [
+        ...(firstPage.data ?? []),
+        ...remainingPages.flatMap((p) => p.data ?? []),
+      ];
       setAdmins(combinedData);
       if (combinedData.length > 0) {
         setState("success");
@@ -126,12 +131,21 @@ export function LiveRoomManagerAdmins() {
       case "error":
         return (
           <div className="h-full flex flex-col items-center justify-center gap-4 p-8 text-center">
-            <HugeiconsIcon icon={XCircle} className="w-6 h-6 text-destructive" />
+            <HugeiconsIcon
+              icon={XCircle}
+              className="w-6 h-6 text-destructive"
+            />
             <div className="space-y-1">
               <p className="text-sm font-medium text-foreground">加载失败</p>
-              <p className="text-xs text-muted-foreground">网络异常或服务器错误</p>
+              <p className="text-xs text-muted-foreground">
+                网络异常或服务器错误
+              </p>
             </div>
-            <Button variant="outline" size="sm" className="gap-1.5" onClick={fetchAllAdmins}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              onClick={fetchAllAdmins}>
               <HugeiconsIcon icon={RefreshCw} className="w-4 h-4" />
               刷新
             </Button>
@@ -147,20 +161,30 @@ export function LiveRoomManagerAdmins() {
         return (
           <div className="divide-y">
             {admins.map((admin) => (
-              <div key={admin.uid} className="flex items-center justify-between hover:bg-muted/30 p-3">
+              <div
+                key={admin.uid}
+                className="flex items-center justify-between hover:bg-muted/30 p-3">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                     <Avatar className="w-8 h-8">
                       <AvatarImage src={admin.face || "/akarin.webp"} />
-                      <AvatarFallback className="text-xs">{admin.uname.slice(0, 2).toUpperCase()}</AvatarFallback>
+                      <AvatarFallback className="text-xs">
+                        {admin.uname.slice(0, 2).toUpperCase()}
+                      </AvatarFallback>
                     </Avatar>
                   </div>
                   <div>
                     <p className="font-medium text-sm">
-                      {admin.uname} <span className="text-muted-foreground">(UID: {admin.uid})</span>
+                      {admin.uname}{" "}
+                      <span className="text-muted-foreground">
+                        (UID: {admin.uid})
+                      </span>
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      <HugeiconsIcon icon={Clock} className="w-3 h-3 inline mr-1" />
+                      <HugeiconsIcon
+                        icon={Clock}
+                        className="w-3 h-3 inline mr-1"
+                      />
                       任命时间：{admin.ctime}
                     </p>
                   </div>
@@ -202,21 +226,30 @@ export function LiveRoomManagerAdmins() {
             当前房管数：{admins.length}/{maxCount}
           </Badge>
         </div>
-        <ScrollArea className="h-[calc(100vh-360px)] border rounded-md">{content()}</ScrollArea>
+        <ScrollArea className="h-[calc(100vh-360px)] border rounded-md">
+          {content()}
+        </ScrollArea>
       </div>
-      <AlertDialog open={confirmAdminDialog} onOpenChange={setConfirmAdminDialog}>
+      <AlertDialog
+        open={confirmAdminDialog}
+        onOpenChange={setConfirmAdminDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>任命房管</AlertDialogTitle>
             <AlertDialogDescription>
-              确定任命 <strong>{pendingAddAdmin}</strong> 为你的房管吗？房管可禁言用户，设置直播间屏蔽词
+              确定任命 <strong>{pendingAddAdmin}</strong>{" "}
+              为你的房管吗？房管可禁言用户，设置直播间屏蔽词
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel variant="outline" onClick={() => setConfirmAdminDialog(false)}>
+            <AlertDialogCancel
+              variant="outline"
+              onClick={() => setConfirmAdminDialog(false)}>
               取消
             </AlertDialogCancel>
-            <AlertDialogAction onClick={confirmAppointAdmin}>确定</AlertDialogAction>
+            <AlertDialogAction onClick={confirmAppointAdmin}>
+              确定
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -233,10 +266,14 @@ export function LiveRoomManagerAdmins() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel variant="outline" onClick={() => setRevokeAdminDialog(false)}>
+            <AlertDialogCancel
+              variant="outline"
+              onClick={() => setRevokeAdminDialog(false)}>
               取消
             </AlertDialogCancel>
-            <AlertDialogAction onClick={confirmRevokeAdmin}>撤销</AlertDialogAction>
+            <AlertDialogAction onClick={confirmRevokeAdmin}>
+              撤销
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

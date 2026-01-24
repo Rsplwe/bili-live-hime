@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
@@ -17,7 +23,12 @@ interface UserSelectDialogProps {
   onConfirm: (user: UserSelectItem) => void;
 }
 
-export function UserSelectDialog({ open, onOpenChange, users, onConfirm }: UserSelectDialogProps) {
+export function UserSelectDialog({
+  open,
+  onOpenChange,
+  users,
+  onConfirm,
+}: UserSelectDialogProps) {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   const selectedUser = users.find((u) => u.id === selectedUserId);
@@ -48,20 +59,28 @@ export function UserSelectDialog({ open, onOpenChange, users, onConfirm }: UserS
 
                 <div className="flex-1">
                   <div className="font-medium">{user.name}</div>
-                  <div className="text-xs text-muted-foreground">ID: {user.id}</div>
+                  <div className="text-xs text-muted-foreground">
+                    ID: {user.id}
+                  </div>
                 </div>
 
                 <div
                   className={cn(
                     "h-4 w-4 rounded-full border",
-                    selected ? "border-primary bg-primary" : "border-muted-foreground",
+                    selected
+                      ? "border-primary bg-primary"
+                      : "border-muted-foreground",
                   )}
                 />
               </button>
             );
           })}
 
-          {users.length === 0 && <div className="text-sm text-muted-foreground text-center py-8">未搜索到用户</div>}
+          {users.length === 0 && (
+            <div className="text-sm text-muted-foreground text-center py-8">
+              未搜索到用户
+            </div>
+          )}
         </div>
 
         <DialogFooter>

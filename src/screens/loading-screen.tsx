@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useConfigStore } from "@/store/config";
 import { getUserInfo } from "@/api/user";
 import { getAreaList, getRoomId, getRoomToken } from "@/api/live";
@@ -38,8 +44,14 @@ export function LoadingScreen({ onValidationComplete }: LoadingScreenProps) {
           uid,
           username: userRes.uname,
           avatar: userRes.face,
-          img_url: imgUrl.slice(imgUrl.lastIndexOf("/") + 1, imgUrl.lastIndexOf(".")),
-          sub_url: subUrl.slice(subUrl.lastIndexOf("/") + 1, subUrl.lastIndexOf(".")),
+          img_url: imgUrl.slice(
+            imgUrl.lastIndexOf("/") + 1,
+            imgUrl.lastIndexOf("."),
+          ),
+          sub_url: subUrl.slice(
+            subUrl.lastIndexOf("/") + 1,
+            subUrl.lastIndexOf("."),
+          ),
         });
 
         setStatus("获取直播间信息...");

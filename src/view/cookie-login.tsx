@@ -66,7 +66,9 @@ export function CookieLogin({ onLoginSuccess }: CookieLoginProps) {
         return;
       }
       const state = useConfigStore.getState();
-      state.setCookies(Object.entries(parsed).map(([name, value]) => ({ name, value })));
+      state.setCookies(
+        Object.entries(parsed).map(([name, value]) => ({ name, value })),
+      );
       onLoginSuccess();
       setIsLoading(true);
     }, 1500);
@@ -98,7 +100,10 @@ export function CookieLogin({ onLoginSuccess }: CookieLoginProps) {
         </Alert>
       )}
 
-      <Button type="submit" disabled={isLoading || !cookie.trim()} className="w-full">
+      <Button
+        type="submit"
+        disabled={isLoading || !cookie.trim()}
+        className="w-full">
         {isLoading ? (
           <>
             <Spinner />

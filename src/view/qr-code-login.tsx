@@ -10,7 +10,13 @@ interface QRCodeLoginProps {
   onLoginSuccess: () => void;
 }
 
-type QRStatus = "loading" | "pending" | "scanned" | "confirmed" | "expired" | "error";
+type QRStatus =
+  | "loading"
+  | "pending"
+  | "scanned"
+  | "confirmed"
+  | "expired"
+  | "error";
 
 export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
   const [qrStatus, setQrStatus] = useState<QRStatus>("loading");
@@ -115,8 +121,15 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
           </div>
         ) : qrStatus === "expired" || qrStatus === "error" ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-card/95">
-            <HugeiconsIcon icon={XCircle} className="w-8 h-8 text-destructive" />
-            <Button variant="link" size="sm" onClick={generateQRCode} className="gap-1.5">
+            <HugeiconsIcon
+              icon={XCircle}
+              className="w-8 h-8 text-destructive"
+            />
+            <Button
+              variant="link"
+              size="sm"
+              onClick={generateQRCode}
+              className="gap-1.5">
               <HugeiconsIcon icon={RefreshCw} className="w-3.5 h-3.5" />
               刷新
             </Button>
@@ -130,7 +143,10 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
             </div>
             {qrStatus === "scanned" && (
               <div className="absolute inset-0 flex items-center justify-center bg-card/80">
-                <HugeiconsIcon icon={CheckCircle} className="w-12 h-12 text-primary" />
+                <HugeiconsIcon
+                  icon={CheckCircle}
+                  className="w-12 h-12 text-primary"
+                />
               </div>
             )}
           </>
@@ -149,7 +165,9 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
         </Button>
       )}
 
-      <p className="text-xs text-center text-muted-foreground">打开您的哔哩哔哩 App 并扫描此二维码登入。</p>
+      <p className="text-xs text-center text-muted-foreground">
+        打开您的哔哩哔哩 App 并扫描此二维码登入。
+      </p>
     </div>
   );
 }

@@ -36,7 +36,13 @@ export const useWsStore = create<WsState>((set) => ({
 
   addMessage: (msg) =>
     set((state) => ({
-      regularMessages: msg.type !== "superchat" ? [...state.regularMessages, msg] : state.regularMessages,
-      superChats: msg.type === "superchat" ? [...state.superChats, msg] : state.superChats,
+      regularMessages:
+        msg.type !== "superchat"
+          ? [...state.regularMessages, msg]
+          : state.regularMessages,
+      superChats:
+        msg.type === "superchat"
+          ? [...state.superChats, msg]
+          : state.superChats,
     })),
 }));
