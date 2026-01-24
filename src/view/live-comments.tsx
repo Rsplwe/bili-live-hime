@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import {
   Gift,
   Send,
@@ -27,24 +27,9 @@ export function LiveComments() {
   const [autoScroll, setAutoScroll] = useState(true);
   const [activeTab, setActiveTab] = useState<"all" | "superchat">("all");
 
-  const regularScrollRef = useRef<HTMLDivElement>(null);
   const connected = useWsStore((s) => s.connected);
   const superChatComments = useWsStore((s) => s.superChats);
   const regularComments = useWsStore((s) => s.regularMessages);
-
-  useEffect(() => {
-    if (autoScroll && regularScrollRef.current) {
-      const viewport = regularScrollRef.current.querySelector(
-        "[data-radix-scroll-area-viewport]",
-      );
-      if (viewport) {
-        viewport.scrollTo({
-          top: viewport.scrollHeight,
-          behavior: "smooth",
-        });
-      }
-    }
-  }, [regularComments.length, autoScroll]);
 
   const handleSendMessage = async () => {
     try {
