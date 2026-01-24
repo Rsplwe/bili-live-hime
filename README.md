@@ -33,6 +33,10 @@
   <img src="imgs/screen_3.jpg" width="45%" />
   <img src="imgs/screen_4.jpg" width="45%" />
 </p>
+<p align="center">
+  <img src="imgs/screen_5.jpg" width="45%" />
+  <img src="imgs/screen_6.jpg" width="45%" />
+</p>
 
 ## 使用说明
 1. 登入哔哩哔哩账号（扫码 / Cookie）
