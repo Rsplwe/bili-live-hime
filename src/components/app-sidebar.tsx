@@ -1,13 +1,14 @@
-import { User, Radio, MessageSquare, Settings } from "@hugeicons/core-free-icons";
+import { User, Radio, Shield, MessageSquare, Settings } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { HugeiconsIcon } from "@hugeicons/react";
 
-type TabType = "account" | "stream" | "comments" | "settings";
+type TabType = "account" | "stream" | "manager" | "comments" | "settings";
 
 const mainTabs = [
   { id: "account" as const, label: "个人信息", icon: User },
   { id: "stream" as const, label: "开播设置", icon: Radio },
+  { id: "manager" as const, label: "房间管理", icon: Shield },
   { id: "comments" as const, label: "弹幕", icon: MessageSquare },
 ];
 

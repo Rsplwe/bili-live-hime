@@ -10,7 +10,7 @@ import type { Area, Stream } from "@/types/config";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { QRCodeSVG } from "qrcode.react";
 import { toast } from "sonner";
-import { LoadingButton } from "@/components/ui/loading-button";
+import { LoadingButton } from "@/components/loading-button";
 import { getLiveVersion, startLive, stopLive, updateRoomArea, updateRoomTitle } from "@/api/live";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HugeiconsIcon } from "@hugeicons/react";

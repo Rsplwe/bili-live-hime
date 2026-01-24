@@ -11,6 +11,7 @@ import { useConfigStore } from "@/store/config";
 import { Toaster } from "@/components/ui/sonner";
 import { WsDebug } from "@/screens/ws-debug";
 import { UserProfile } from "@/view/user-profile";
+import { LiveRoomManager } from "@/view/manager/live-room-manager";
 
 type AuthState = "loading" | "login" | "authenticated" | "ws";
 
@@ -66,6 +67,7 @@ export default function App() {
                   {activeTab === "account" && <UserProfile onLogout={handleLogout} />}
                   {activeTab === "stream" && <LiveStreamSettings />}
                   {activeTab === "comments" && <LiveComments />}
+                  {activeTab === "manager" && <LiveRoomManager />}
                   {activeTab === "settings" && <MoreSettings />}
                 </div>
               </main>

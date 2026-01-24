@@ -9,12 +9,12 @@ import { type Comment } from "@/types/comment";
 import { startWs, stopWs } from "@/ws/ws-client";
 import { Input } from "@/components/ui/input";
 import { sendComment } from "@/api/live";
-import { LoadingButton } from "@/components/ui/loading-button";
+import { LoadingButton } from "@/components/loading-button";
 import { toast } from "sonner";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { VirtualScrollArea } from "@/components/ui/virtual-scroll-area";
+import { VirtualScrollArea } from "@/components/virtual-scroll-area";
 
 export function LiveComments() {
   const [newMessage, setNewMessage] = useState("");
