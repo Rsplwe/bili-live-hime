@@ -249,6 +249,11 @@ export function LiveStreamSettings() {
                     <SelectGroup>
                       {childAreas.map((area) => (
                         <SelectItem key={area.id} value={area.id}>
+                          <img
+                            src={area.pic}
+                            alt={area.name}
+                            className="h-5 w-5 rounded-sm object-cover"
+                          />
                           {area.name}
                         </SelectItem>
                       ))}
