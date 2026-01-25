@@ -1,5 +1,7 @@
 import { request } from "@/lib/api";
 
+const BASE_URL = "https://api.bilibili.com";
+
 interface UserInfo {
   mid: number;
   uname: string;
@@ -11,9 +13,9 @@ interface UserInfo {
 }
 
 export async function getUserInfo(): Promise<UserInfo> {
-  return request<UserInfo>("https://api.bilibili.com/x/web-interface/nav", {
+  return request<UserInfo>(BASE_URL, "/x/web-interface/nav", {
     headers: {
-      Origin: "https://api.bilibili.com",
+      Origin: BASE_URL,
     },
   });
 }

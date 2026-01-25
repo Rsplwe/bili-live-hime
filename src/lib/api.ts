@@ -18,7 +18,8 @@ const COMMON_HEADERS = {
 };
 
 export async function request<T>(
-  url: string,
+  base_url: string,
+  endpoint: string,
   options: RequestInit & {
     data?: Record<string, string>;
   } = {},
@@ -26,6 +27,7 @@ export async function request<T>(
   raw: boolean = false,
 ): Promise<T> {
   const state = useConfigStore.getState();
+  const url = `${base_url}${endpoint}`;
   const method = options.method?.toUpperCase() || "GET";
   console.log(`Url (${method}): ${url}`);
 
