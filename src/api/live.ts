@@ -92,6 +92,28 @@ interface RoomSilent {
   minute: number;
 }
 
+interface ContributionRank {
+  item:
+    | {
+        uid: number;
+        name: string;
+        face: string;
+        rank: number;
+        score: number;
+        wealth_level: number;
+        medal_info: {
+          medal_name: string;
+          level: number;
+          guard_level: number;
+          is_light: number;
+          medal_color_start: number;
+          medal_color_end: number;
+          medal_color_border: number;
+        };
+      }[]
+    | null;
+}
+
 export async function getRoomId(uid: number): Promise<RoomId> {
   return request<RoomId>(BASE_URL, `/room/v2/Room/room_id_by_uid?uid=${uid}`, {
     headers: {
@@ -480,6 +502,35 @@ export async function deleteBlockedWords(keyword: string): Promise<object> {
         csrf_token: csrf,
         csrf: csrf,
         visit_id: "",
+      },
+    },
+  );
+}
+
+export async function getContributionRank(): Promise<ContributionRank> {
+  const state = useConfigStore.getState();
+  const query = encWbi(
+    {
+      ruid: state.config.uid,
+      room_id: state.config.roomId,
+      page: 1,
+      page_size: 100,
+      type: "online_rank",
+      switch: "contribution_rank",
+      platform: "web",
+      web_location: 444.8,
+    },
+    state.config.img_url,
+    state.config.sub_url,
+  );
+  console.log(query);
+  return request<ContributionRank>(
+    BASE_URL,
+    `/xlive/general-interface/v1/rank/queryContributionRank?${query}`,
+    {
+      headers: {
+        origin: "https://live.bilibili.com",
+        referer: "https://live.bilibili.com/",
       },
     },
   );

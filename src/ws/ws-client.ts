@@ -137,6 +137,10 @@ async function parseMessage(message: ArrayBuffer) {
       });
       break;
     }
+    case "ONLINE_RANK_COUNT": {
+      useWsStore.getState().setOnlineCount(obj["data"]["count"]);
+      break;
+    }
     case "SEND_GIFT":
       useWsStore.getState().addMessage({
         id: String(messageId++),

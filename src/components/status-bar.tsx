@@ -1,15 +1,11 @@
-import { Users, Wifi, WifiOff } from "@hugeicons/core-free-icons";
+import { Flame, Users, Wifi, WifiOff } from "@hugeicons/core-free-icons";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useWsStore } from "@/store/ws";
 import { HugeiconsIcon } from "@hugeicons/react";
 
 export function StatusBar() {
-  const {
-    //popularity,
-    watchedUser,
-    connected,
-  } = useWsStore((s) => s);
+  const { onlineCount, watchedUser, connected } = useWsStore((s) => s);
 
   const formatNumber = (num: number) => {
     if (num >= 10000) {
@@ -25,19 +21,20 @@ export function StatusBar() {
     <div className="h-7 border-t border-border bg-muted/50 px-4 flex items-center justify-between text-xs text-muted-foreground">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-1.5">
-          <HugeiconsIcon icon={Users} className="h-4 w-4" />
+          <HugeiconsIcon icon={Flame} className="h-3.5 w-3.5 text-orange-500" />
           <span>已观看人次:</span>
           <span className="font-medium text-foreground">
             {formatNumber(watchedUser)}
           </span>
         </div>
         <Separator orientation="vertical" className="h-4" />
-        {/* 
         <div className="flex items-center gap-1.5">
-          <Flame className="h-3.5 w-3.5 text-orange-500" />
-          <span>人气值:</span>
-          <span className="font-medium text-foreground">{formatNumber(popularity)}</span>
-        </div>*/}
+          <HugeiconsIcon icon={Users} className="h-4 w-4" />
+          <span>在线观众:</span>
+          <span className="font-medium text-foreground">
+            {formatNumber(onlineCount || 0)}
+          </span>
+        </div>
       </div>
       <div className="flex items-center gap-2">
         <Badge

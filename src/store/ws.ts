@@ -8,9 +8,11 @@ interface WsState {
   superChats: Comment[];
   watchedUser: number;
   popularity: number;
+  onlineCount: number;
 
   setWatchedUser: (v: number) => void;
   setPopularity: (v: number) => void;
+  setOnlineCount: (v: number) => void;
 
   setConnected: (v: boolean) => void;
   connect: () => void;
@@ -25,6 +27,9 @@ export const useWsStore = create<WsState>((set) => ({
   superChats: [],
   watchedUser: 0,
   popularity: 0,
+  onlineCount: 0,
+
+  setOnlineCount: (v) => set({ onlineCount: v }),
 
   setWatchedUser: (v) => set({ watchedUser: v }),
   setPopularity: (v) => set({ popularity: v }),

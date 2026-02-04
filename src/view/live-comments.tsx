@@ -4,7 +4,14 @@ import {
   Send,
   VerticalScrollPointIcon,
   Link,
+  Users,
+  Sparkles,
   Unlink,
+  Message,
+  Trophy,
+  Medal,
+  Award,
+  Anchor,
 } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -14,18 +21,38 @@ import { useWsStore } from "@/store/ws";
 import { type Comment } from "@/types/comment";
 import { startWs, stopWs } from "@/ws/ws-client";
 import { Input } from "@/components/ui/input";
-import { sendComment } from "@/api/live";
+import { getContributionRank, sendComment } from "@/api/live";
 import { LoadingButton } from "@/components/loading-button";
 import { toast } from "sonner";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { VirtualScrollArea } from "@/components/virtual-scroll-area";
+import { useQuery } from "@tanstack/react-query";
+
+const intToHexColor = (color: number) =>
+  `#${color.toString(16).padStart(6, "0")}`;
 
 export function LiveComments() {
   const [newMessage, setNewMessage] = useState("");
   const [autoScroll, setAutoScroll] = useState(true);
-  const [activeTab, setActiveTab] = useState<"all" | "superchat">("all");
+  const [activeTab, setActiveTab] = useState<"all" | "superchat" | "audience">(
+    "all",
+  );
+  const {
+    data: rank = [],
+    // isLoading,
+    // isFetching,
+    // error,
+  } = useQuery({
+    queryKey: ["contribution-rank"],
+    queryFn: getContributionRank,
+    enabled: activeTab === "audience",
+    refetchInterval: activeTab === "audience" ? 5000 : false,
+    refetchOnWindowFocus: false,
+    select: (data) => data.item ?? [],
+    staleTime: 0,
+  });
 
   const connected = useWsStore((s) => s.connected);
   const superChatComments = useWsStore((s) => s.superChats);
@@ -48,6 +75,22 @@ export function LiveComments() {
     if (amount <= 500) return "bg-orange-400";
     if (amount <= 1000) return "bg-red-400";
     return "bg-red-600";
+  };
+
+  const getRankIcon = (rank: number) => {
+    if (rank === 1)
+      return (
+        <HugeiconsIcon icon={Trophy} className="w-5 h-5 text-yellow-500" />
+      );
+    if (rank === 2)
+      return <HugeiconsIcon icon={Medal} className="w-5 h-5 text-slate-400" />;
+    if (rank === 3)
+      return <HugeiconsIcon icon={Award} className="w-5 h-5 text-amber-600" />;
+    return (
+      <span className="w-5 h-5 flex items-center justify-center text-sm text-muted-foreground">
+        {rank}
+      </span>
+    );
   };
 
   const renderRegularComment = (comment: Comment) => {
@@ -146,6 +189,69 @@ export function LiveComments() {
     );
   };
 
+  const MedalBadge = ({
+    medal,
+  }: {
+    medal: {
+      start_color: number;
+      end_color: number;
+      border_color: number;
+      name: string;
+      level: number;
+      light: number;
+    };
+  }) => {
+    const bgStart = intToHexColor(medal.start_color);
+    const bgEnd = intToHexColor(medal.end_color);
+    const border_color = intToHexColor(medal.border_color);
+    const isLight = medal.light === 1;
+
+    return (
+      <div
+        className="flex items-center h-4.5 rounded-[6px] border text-[11px] leading-none select-none"
+        style={{
+          background: `linear-gradient(90deg, ${bgStart}, ${bgEnd})`,
+          borderColor: border_color,
+          opacity: isLight ? 1 : 0.35,
+        }}>
+        <span
+          className="px-1.5 font-medium whitespace-nowrap"
+          style={{ color: "#fff" }}>
+          {medal.name}
+        </span>
+        <span
+          className="px-1.5 tabular-nums"
+          style={{
+            color: "#fff",
+            fontWeight: 500,
+          }}>
+          {medal.level}
+        </span>
+      </div>
+    );
+  };
+
+  const TitleBadge = ({
+    title,
+    color = "#93a7cd",
+  }: {
+    title: string;
+    color?: string;
+  }) => {
+    return (
+      <div
+        className="flex items-center h-4.5 rounded-lg px-1.5 text-[10px] whitespace-nowrap select-none"
+        style={{
+          backgroundColor: `${color}14`,
+          border: `1px solid ${color}33`,
+          color,
+        }}>
+        <HugeiconsIcon icon={Anchor} className="w-3.5 h-3.5 mr-1" />
+        {title}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -189,25 +295,33 @@ export function LiveComments() {
 
       <Tabs
         value={activeTab}
-        onValueChange={(v) => setActiveTab(v as "all" | "superchat")}>
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="all" className="gap-2">
-            全部弹幕
-            <Badge variant="secondary" className="ml-1 h-5 px-1.5">
+        onValueChange={(v) =>
+          setActiveTab(v as "all" | "superchat" | "audience")
+        }>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="all" className="gap-1 text-xs px-2">
+            <HugeiconsIcon icon={Message} className="w-3.5 h-3.5" />
+            弹幕
+            <Badge variant="secondary" className="ml-0.5 h-4 px-1 text-xs">
               {regularComments.length}
             </Badge>
           </TabsTrigger>
-          <TabsTrigger value="superchat" className="gap-2">
+          <TabsTrigger value="superchat" className="gap-1 text-xs px-2">
+            <HugeiconsIcon icon={Sparkles} className="w-3.5 h-3.5" />
             醒目留言
             <Badge
               variant="secondary"
-              className="ml-1 h-5 px-1.5 bg-linear-to-r from-yellow-500/20 to-orange-500/20">
+              className="ml-0.5 h-4 px-1 text-xs bg-linear-to-r from-yellow-500/20 to-orange-500/20">
               {superChatComments.length}
             </Badge>
           </TabsTrigger>
+          <TabsTrigger value="audience" className="gap-1 text-xs px-2">
+            <HugeiconsIcon icon={Users} className="w-3.5 h-3.5" />
+            在线榜
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="all">
+        <TabsContent value="all" className="mt-4">
           <div className="h-[calc(100vh-310px)] w-full">
             <VirtualScrollArea
               autoScroll={autoScroll}
@@ -217,10 +331,69 @@ export function LiveComments() {
           </div>
         </TabsContent>
 
-        <TabsContent value="superchat">
+        <TabsContent value="superchat" className="mt-4">
           <ScrollArea className="h-[calc(100vh-310px)] w-full rounded-md border">
             <div className="p-2">
               {superChatComments.map(renderSuperChatComment)}
+            </div>
+          </ScrollArea>
+        </TabsContent>
+        <TabsContent value="audience" className="mt-4">
+          <ScrollArea className="h-[calc(100vh-310px)] w-full overflow-auto rounded-md border bg-background">
+            <div className="divide-y">
+              {rank
+                // .sort((a, b) => b.score - a.score)
+                .map((user, index) => (
+                  <div
+                    key={user.rank}
+                    className={`flex items-center gap-3 p-3 hover:bg-muted/50 transition-colors ${
+                      index < 3
+                        ? "bg-linear-to-r from-primary/5 to-transparent"
+                        : ""
+                    }`}>
+                    <div className="w-6 flex items-center justify-center">
+                      {getRankIcon(index + 1)}
+                    </div>
+                    <Avatar className="w-8 h-8 border-2 border-background">
+                      <AvatarImage src={user.face || "/placeholder.svg"} />
+                      <AvatarFallback className="text-xs">
+                        {user.name.slice(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm font-medium truncate">
+                          {user.name}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {user.wealth_level > 0 && (
+                          <TitleBadge title={`${user.wealth_level}`} />
+                        )}
+                        {user.medal_info && (
+                          <MedalBadge
+                            medal={{
+                              start_color: user.medal_info.medal_color_start,
+                              end_color: user.medal_info.medal_color_end,
+                              border_color: user.medal_info.medal_color_border,
+                              name: user.medal_info.medal_name,
+                              level: user.medal_info.level,
+                              light: user.medal_info.is_light,
+                            }}
+                          />
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm font-bold text-primary">
+                        {user.score}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        贡献值
+                      </div>
+                    </div>
+                  </div>
+                ))}
             </div>
           </ScrollArea>
         </TabsContent>
