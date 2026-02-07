@@ -10,6 +10,7 @@ import { getVersion } from "@tauri-apps/api/app";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useEffect, useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
+import type { UnlistenFn } from "@tauri-apps/api/event";
 
 export function Navbar() {
   const [isMaximized, setIsMaximized] = useState(false);
@@ -17,6 +18,18 @@ export function Navbar() {
 
   useEffect(() => {
     getVersion().then(setVersion);
+
+    let unlisten: UnlistenFn | undefined = undefined;
+
+    const listen = async () => {
+      unlisten = await getCurrentWindow().onResized(async () => {
+        setIsMaximized(await getCurrentWindow().isMaximized());
+      });
+    };
+
+    listen();
+
+    return () => unlisten && unlisten();
   }, []);
 
   const handleMaximizeToggle = async () => {
