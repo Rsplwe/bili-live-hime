@@ -1,8 +1,8 @@
 import { useWsStore } from "@/store/ws";
-import { brotliDecode } from "@/utils/brotli";
 import { useConfigStore } from "@/store/config";
 import { InteractWordV2 } from "@/protos/InteractWordV2";
 import Pako from "pako";
+import { invoke } from "@tauri-apps/api/core";
 
 let ws: WebSocket | null = null;
 let heartbeatTimer: number | null = null;
@@ -78,26 +78,26 @@ function createPacket(
   return packet;
 }
 
-function parseHeader(buffer: ArrayBuffer): PacketHeader {
-  const view = new DataView(buffer);
+function parseHeader(view: Uint8Array): PacketHeader {
+  const dv = new DataView(view.buffer, view.byteOffset, view.byteLength);
   return {
-    totalSize: view.getUint32(0, false),
-    headerSize: view.getUint16(4, false),
-    protocolVersion: view.getUint16(6, false),
-    opcode: view.getUint32(8, false),
-    sequence: view.getUint32(12, false),
+    totalSize: dv.getUint32(0, false),
+    headerSize: dv.getUint16(4, false),
+    protocolVersion: dv.getUint16(6, false),
+    opcode: dv.getUint32(8, false),
+    sequence: dv.getUint32(12, false),
   };
 }
 
-async function depackSubPacket(buffer: ArrayBuffer) {
+async function depackSubPacket(buffer: Uint8Array) {
   let offset = 0;
 
-  while (offset < buffer.byteLength) {
-    const subBuffer = buffer.slice(offset);
+  while (offset < buffer.length) {
+    const subBuffer = buffer.subarray(offset);
     const subHeader = parseHeader(subBuffer);
     const bodyStart = offset + subHeader.headerSize;
     const bodyEnd = offset + subHeader.totalSize;
-    const subPacketPayload = buffer.slice(bodyStart, bodyEnd);
+    const subPacketPayload = buffer.subarray(bodyStart, bodyEnd);
     parseMessage(subPacketPayload);
     offset += subHeader.totalSize;
   }
@@ -108,7 +108,7 @@ function base64ToBytes(base64: string) {
   return Uint8Array.from(binString, (m) => m.codePointAt(0) || 0);
 }
 
-async function parseMessage(message: ArrayBuffer) {
+async function parseMessage(message: Uint8Array) {
   const decoder = new TextDecoder("utf-8");
   const pl = decoder.decode(message);
   const obj = JSON.parse(pl);
@@ -170,18 +170,22 @@ async function parseMessage(message: ArrayBuffer) {
 }
 
 async function parsePacket(buffer: ArrayBuffer) {
-  const header = parseHeader(buffer);
-  const body = buffer.slice(header.headerSize, header.totalSize);
+  const message = new Uint8Array(buffer);
+  const header = parseHeader(message);
+
+  const body = message.subarray(header.headerSize, header.totalSize);
 
   if (header.opcode === OPCODE.NORMAL) {
     switch (header.protocolVersion) {
       case PROTOCOL_VERSION.COMPRESSED_ZLIB: {
-        await depackSubPacket(Pako.inflate(body).buffer);
+        await depackSubPacket(Pako.inflate(body));
         break;
       }
       case PROTOCOL_VERSION.COMPRESSED_BROTLI: {
-        const decoded = brotliDecode(new Int8Array(body));
-        await depackSubPacket(decoded.buffer as ArrayBuffer);
+        const rawDecoded = await invoke<number[]>("brotli_decode", {
+          data: new Uint8Array(body),
+        });
+        await depackSubPacket(new Uint8Array(rawDecoded));
         break;
       }
       default: {
