@@ -29,7 +29,6 @@
     "js-md5": "^0.8.3",
     "lodash-es": "^4.17.23",
     "next-themes": "^0.4.6",
-    "pako": "^2.1.0",
     "qrcode.react": "^4.2.0",
     "radix-ui": "^1.4.3",
     "react": "^19.2.4",

@@ -1,7 +1,6 @@
 import { useWsStore } from "@/store/ws";
 import { useConfigStore } from "@/store/config";
 import { InteractWordV2 } from "@/protos/InteractWordV2";
-import Pako from "pako";
 import { invoke } from "@tauri-apps/api/core";
 
 let ws: WebSocket | null = null;
@@ -178,7 +177,10 @@ async function parsePacket(buffer: ArrayBuffer) {
   if (header.opcode === OPCODE.NORMAL) {
     switch (header.protocolVersion) {
       case PROTOCOL_VERSION.COMPRESSED_ZLIB: {
-        await depackSubPacket(Pako.inflate(body));
+        const rawDecoded = await invoke<number[]>("zlib_decode", {
+          data: new Uint8Array(body),
+        });
+        await depackSubPacket(new Uint8Array(rawDecoded));
         break;
       }
       case PROTOCOL_VERSION.COMPRESSED_BROTLI: {
