@@ -1,0 +1,21 @@
+version: 2
+updates:
+  # Rust
+  - package-ecosystem: "cargo"
+    directory: "/src-tauri"
+    schedule:
+      interval: "daily"
+    groups:
+      all-rust-dependencies:
+        patterns:
+          - "*"
+  
+  # Frontend
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    groups:
+      all-frontend-dependencies:
+        patterns:
+          - "*"
