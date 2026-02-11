@@ -19,3 +19,6 @@ updates:
       all-frontend-dependencies:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "@eslint/js"
+      - dependency-name: "eslint"
