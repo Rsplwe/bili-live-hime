@@ -1,6 +1,6 @@
 [package]
 name = "bili-live-hime"
-version = "0.4.1"
+version = "0.5.0"
 description = "A Tauri App"
 authors = ["Rsplwe <rsplwe@anon.tokyo>"]
 edition = "2021"
