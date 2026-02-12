@@ -26,6 +26,7 @@ pub struct Message {
 
 pub struct Opcode;
 
+#[allow(dead_code)]
 impl Opcode {
     pub const HEADERBEAT: u32 = 2;
     pub const HEADERBEAT_REPLY: u32 = 3;
@@ -36,6 +37,7 @@ impl Opcode {
 
 pub struct ProtocolVersion;
 
+#[allow(dead_code)]
 impl ProtocolVersion {
     pub const NORMAL: u16 = 0;
     pub const AUTH_HEARTBEAT: u16 = 1;
@@ -174,7 +176,6 @@ impl SocketClient {
     fn parse_message(&self, payload: &[u8]) {
         match String::from_utf8(payload.to_vec()) {
             Ok(result) => {
-                println!("{:?}", result);
                 let _ = self
                     .app_handle
                     .emit("message-received", MessageEvent { payload: result });
@@ -214,6 +215,37 @@ impl SocketClient {
         }
     }
 
+    fn emit_error(&self, msg: impl Into<String>) {
+        let _ = self.app_handle.emit(
+            "connection-error",
+            ErrorEvent {
+                error: msg.into(),
+            },
+        );
+    }
+
+    fn handle_incoming_message(&self, msg: Message) {
+        if msg.header.opcode != Opcode::NORMAL {
+            return;
+        }
+
+        match msg.header.protocol_version {
+            ProtocolVersion::COMPRESSED_BROTLI => {
+                match brotli_decode(msg.payload) {
+                    Ok(decoded) => self.depack_sub_packet(&decoded),
+                    Err(e) => self.emit_error(format!("Brotli decompress error: {}", e)),
+                }
+            }
+            ProtocolVersion::COMPRESSED_ZLIB => {
+                match zlib_decode(msg.payload) {
+                    Ok(decoded) => self.depack_sub_packet(&decoded),
+                    Err(e) => self.emit_error(format!("Zlib decompress error: {}", e)),
+                }
+            }
+            _ => self.parse_message(&msg.payload),
+        }
+    }
+
     pub async fn connection(
         &self,
         host: String,
@@ -226,12 +258,7 @@ impl SocketClient {
         let stream = match TcpStream::connect(&addr).await {
             Ok(s) => s,
             Err(e) => {
-                let _ = self.app_handle.emit(
-                    "connection-error",
-                    ErrorEvent {
-                        error: format!("Connection failed: {}", e),
-                    },
-                );
+                self.emit_error(format!("Connection failed: {}", e));
                 return Err(e.into());
             }
         };
@@ -256,12 +283,7 @@ impl SocketClient {
         let auth_json = serde_json::to_string(&auth_obj)?;
         let verification = Message::verification(1, auth_json.into_bytes());
         if let Err(e) = framed.send(verification).await {
-            let _ = self.app_handle.emit(
-                "connection-error",
-                ErrorEvent {
-                    error: format!("Failed to send auth: {}", e),
-                },
-            );
+            self.emit_error(format!("Failed to send auth: {}", e));
             return Err(e.into());
         }
 
@@ -274,28 +296,10 @@ impl SocketClient {
                 Some(result) = framed.next() => {
                     match result {
                         Ok(msg) => {
-                            if msg.header.opcode == Opcode::NORMAL {
-                                match msg.header.protocol_version {
-                                    ProtocolVersion::COMPRESSED_BROTLI => {
-                                        match brotli_decode(msg.payload) {
-                                            Ok(result) => self.depack_sub_packet(&result),
-                                            Err(_) => todo!(),
-                                        }
-                                    }
-                                     ProtocolVersion::COMPRESSED_ZLIB => {
-                                        match zlib_decode(msg.payload) {
-                                            Ok(result) => self.depack_sub_packet(&result),
-                                            Err(_) => todo!(),
-                                        }
-                                    }
-                                    _ => self.parse_message(&msg.payload),
-                                }
-                            }
+                            self.handle_incoming_message(msg);
                         }
                         Err(e) => {
-                            let _ = self.app_handle.emit("connection-error", ErrorEvent {
-                                error: format!("Receive error: {}", e),
-                            });
+                            self.emit_error(format!("Receive error: {}", e));
                             break;
                         }
                     }
@@ -305,9 +309,7 @@ impl SocketClient {
                     sequence += 1;
 
                     if let Err(e) = framed.send(heartbeat).await {
-                        let _ = self.app_handle.emit("connection-error", ErrorEvent {
-                            error: format!("Heartbeat error: {}", e),
-                        });
+                        self.emit_error(format!("Heartbeat error: {}", e));
                         break;
                     }
                 }
