@@ -88,6 +88,13 @@ impl Decoder for ProtocolCodec {
         let opcode = u32::from_be_bytes([src[8], src[9], src[10], src[11]]);
         let sequence = u32::from_be_bytes([src[12], src[13], src[14], src[15]]);
 
+        if total_size > 10_000_000 {
+            return Err(Self::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "Message too large",
+            ));
+        }
+
         if src.len() < total_size as usize {
             src.reserve(total_size as usize - src.len());
             return Ok(None);
