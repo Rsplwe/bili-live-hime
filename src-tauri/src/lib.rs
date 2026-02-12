@@ -1,47 +1,29 @@
-use brotli::Decompressor;
-use flate2::bufread::ZlibDecoder;
-use std::io::Read;
-use tauri::command;
+mod commands;
+mod connection;
+mod utils;
 
-#[command]
-async fn brotli_decode(data: Vec<u8>) -> Result<Vec<u8>, String> {
-    tauri::async_runtime::spawn_blocking(move || {
-        let mut decompressed = Vec::new();
-        let mut reader = Decompressor::new(&data[..], 4096);
+use crate::commands::{comment_connect, comment_disconnect, comment_is_connected};
+use std::sync::Arc;
+use tokio::sync::Mutex;
 
-        reader
-            .read_to_end(&mut decompressed)
-            .map_err(|e| e.to_string())?;
-
-        Ok(decompressed)
-    })
-    .await
-    .map_err(|e| e.to_string())?
+pub struct ConnectionState {
+    handle: Option<tokio::task::JoinHandle<()>>,
 }
 
-#[command]
-async fn zlib_decode(data: Vec<u8>) -> Result<Vec<u8>, String> {
-    tauri::async_runtime::spawn_blocking(move || {
-        let mut decompressed = Vec::new();
-        let mut decoder = ZlibDecoder::new(&data[..]);
-
-        decoder
-            .read_to_end(&mut decompressed)
-            .map_err(|e| e.to_string())?;
-
-        Ok(decompressed)
-    })
-    .await
-    .map_err(|e| e.to_string())?
-}
+pub type AppState = Arc<Mutex<ConnectionState>>;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .manage(AppState::new(Mutex::new(ConnectionState { handle: None })))
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![brotli_decode, zlib_decode])
+        .invoke_handler(tauri::generate_handler![
+            comment_connect,
+            comment_disconnect,
+            comment_is_connected
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

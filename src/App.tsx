@@ -9,11 +9,11 @@ import { LoginScreen } from "@/screens/login-screen";
 import { LoadingScreen } from "@/screens/loading-screen";
 import { useConfigStore } from "@/store/config";
 import { Toaster } from "@/components/ui/sonner";
-import { WsDebug } from "@/screens/ws-debug";
 import { UserProfile } from "@/view/user-profile";
 import { LiveRoomManager } from "@/view/manager/live-room-manager";
+import { useWsStore } from "./store/ws";
 
-type AuthState = "loading" | "login" | "authenticated" | "ws";
+type AuthState = "loading" | "login" | "authenticated";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>("account");
@@ -22,6 +22,15 @@ export default function App() {
   const init = useConfigStore((state) => state.init);
   const isInitialized = useConfigStore((state) => state.isInitialized);
   const theme = useConfigStore((state) => state.config.theme);
+  const initListeners = useWsStore((state) => state.initListeners);
+
+  useEffect(() => {
+    const listener = initListeners();
+
+    return () => {
+      listener.then((f) => f());
+    };
+  }, [initListeners]);
 
   useEffect(() => {
     if (!isInitialized) {
@@ -51,8 +60,6 @@ export default function App() {
 
   const renderContent = () => {
     switch (authState) {
-      case "ws":
-        return <WsDebug />;
       case "loading":
         return (
           <LoadingScreen onValidationComplete={handleValidationComplete} />

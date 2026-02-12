@@ -17,9 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useWsStore } from "@/store/ws";
 import { type Comment } from "@/types/comment";
-import { startWs, stopWs } from "@/ws/ws-client";
 import { Input } from "@/components/ui/input";
 import { getContributionRank, sendComment } from "@/api/live";
 import { LoadingButton } from "@/components/loading-button";
@@ -29,6 +27,9 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { VirtualScrollArea } from "@/components/virtual-scroll-area";
 import { useQuery } from "@tanstack/react-query";
+import { Spinner } from "@/components/ui/spinner";
+import { useWsStore } from "@/store/ws";
+import { useConfigStore } from "@/store/config";
 
 const intToHexColor = (color: number) =>
   `#${color.toString(16).padStart(6, "0")}`;
@@ -53,10 +54,10 @@ export function LiveComments() {
     select: (data) => data.item ?? [],
     staleTime: 0,
   });
-
-  const connected = useWsStore((s) => s.connected);
+  const { connected, connecting, connect, disconnect } = useWsStore((s) => s);
   const superChatComments = useWsStore((s) => s.superChats);
   const regularComments = useWsStore((s) => s.regularMessages);
+  const { uid, roomId, roomToken } = useConfigStore((s) => s.config);
 
   const handleSendMessage = async () => {
     try {
@@ -264,32 +265,37 @@ export function LiveComments() {
             <HugeiconsIcon icon={VerticalScrollPointIcon} />
             自动滚动 {autoScroll ? "开" : "关"}
           </Button>
-          <LoadingButton
+          <Button
             variant={connected ? "default" : "outline"}
-            onClickAsync={async () => {
-              try {
-                if (!connected) {
-                  await startWs();
-                  console.log("连接成功");
-                } else {
-                  await stopWs();
-                }
-              } catch {
-                alert("连接失败");
+            disabled={connecting}
+            onClick={async () => {
+              if (!connected) {
+                await connect(uid, roomId, roomToken);
+              } else {
+                await disconnect();
               }
             }}>
-            {!connected ? (
+            {connecting ? (
               <>
-                <HugeiconsIcon icon={Link} />
-                连接
+                <Spinner />
+                处理中
               </>
             ) : (
               <>
-                <HugeiconsIcon icon={Unlink} />
-                断开
+                {!connected ? (
+                  <>
+                    <HugeiconsIcon icon={Link} />
+                    连接
+                  </>
+                ) : (
+                  <>
+                    <HugeiconsIcon icon={Unlink} />
+                    断开
+                  </>
+                )}
               </>
             )}
-          </LoadingButton>
+          </Button>
         </div>
       </div>
 

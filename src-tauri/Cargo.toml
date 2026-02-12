@@ -26,6 +26,10 @@ tauri-plugin-http = { version = "2", features = ["unsafe-headers"] }
 tauri-plugin-fs = "2"
 brotli = "8.0.2"
 flate2 = "1.1.9"
+tokio = { version = "1", features = ["full"] }
+tokio-util = { version = "0.7", features = ["codec"] }
+bytes = "1"
+futures = "0.3"
 
 [profile.release]
 lto = true
