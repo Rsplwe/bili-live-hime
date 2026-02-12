@@ -3,6 +3,7 @@ import { type Comment } from "@/types/comment";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { InteractWordV2 } from "@/protos/InteractWordV2";
+import { toast } from "sonner";
 
 interface MessageEvent {
   payload: string;
@@ -29,7 +30,6 @@ interface WsState {
   watchedUser: number;
   popularity: number;
   onlineCount: number;
-  error: string | null;
   messageId: number;
 
   initListeners: () => Promise<() => void>;
@@ -53,7 +53,6 @@ export const useWsStore = create<WsState>((set) => ({
   watchedUser: 0,
   popularity: 0,
   onlineCount: 0,
-  error: null,
   messageId: 0,
 
   setOnlineCount: (v) => set({ onlineCount: v }),
@@ -67,7 +66,7 @@ export const useWsStore = create<WsState>((set) => ({
       "connection-success",
       (event) => {
         console.log("Connected:", event.payload);
-        set({ connected: true, connecting: false, error: null });
+        set({ connected: true, connecting: false });
       },
     );
 
@@ -176,7 +175,8 @@ export const useWsStore = create<WsState>((set) => ({
       "connection-error",
       (event) => {
         console.error("Connection error:", event.payload.error);
-        set({ error: event.payload.error, connecting: false });
+        toast.error(`Connection error: ${event.payload.error}`);
+        set({ connecting: false });
       },
     );
 
@@ -188,7 +188,6 @@ export const useWsStore = create<WsState>((set) => ({
     };
   },
   connect: async (uid: number, room: number, token: string) => {
-    console.log("call");
     try {
       await invoke("comment_connect", {
         host: "broadcastlv.chat.bilibili.com",
@@ -198,7 +197,8 @@ export const useWsStore = create<WsState>((set) => ({
         token: token,
       });
     } catch (error) {
-      set({ error: error as string, connecting: false });
+      toast.error(`connect error: ${(error as Error).message}`);
+      set({ connecting: false });
     }
   },
   disconnect: async () => {
@@ -207,7 +207,8 @@ export const useWsStore = create<WsState>((set) => ({
       await invoke("comment_disconnect");
       set({ connecting: false, connected: false });
     } catch (error) {
-      set({ error: error as string, connecting: false });
+      toast.error(`disconnect error: ${(error as Error).message}`);
+      set({ connecting: false });
     }
   },
   addMessage: (msg) =>
