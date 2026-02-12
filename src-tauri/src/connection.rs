@@ -216,12 +216,9 @@ impl SocketClient {
     }
 
     fn emit_error(&self, msg: impl Into<String>) {
-        let _ = self.app_handle.emit(
-            "connection-error",
-            ErrorEvent {
-                error: msg.into(),
-            },
-        );
+        let _ = self
+            .app_handle
+            .emit("connection-error", ErrorEvent { error: msg.into() });
     }
 
     fn handle_incoming_message(&self, msg: Message) {
@@ -230,18 +227,14 @@ impl SocketClient {
         }
 
         match msg.header.protocol_version {
-            ProtocolVersion::COMPRESSED_BROTLI => {
-                match brotli_decode(msg.payload) {
-                    Ok(decoded) => self.depack_sub_packet(&decoded),
-                    Err(e) => self.emit_error(format!("Brotli decompress error: {}", e)),
-                }
-            }
-            ProtocolVersion::COMPRESSED_ZLIB => {
-                match zlib_decode(msg.payload) {
-                    Ok(decoded) => self.depack_sub_packet(&decoded),
-                    Err(e) => self.emit_error(format!("Zlib decompress error: {}", e)),
-                }
-            }
+            ProtocolVersion::COMPRESSED_BROTLI => match brotli_decode(msg.payload) {
+                Ok(decoded) => self.depack_sub_packet(&decoded),
+                Err(e) => self.emit_error(format!("Brotli decompress error: {}", e)),
+            },
+            ProtocolVersion::COMPRESSED_ZLIB => match zlib_decode(msg.payload) {
+                Ok(decoded) => self.depack_sub_packet(&decoded),
+                Err(e) => self.emit_error(format!("Zlib decompress error: {}", e)),
+            },
             _ => self.parse_message(&msg.payload),
         }
     }
