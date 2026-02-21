@@ -4,18 +4,20 @@ import {
   Shield,
   MessageSquare,
   Settings,
+  Plug,
 } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { HugeiconsIcon } from "@hugeicons/react";
 
-type TabType = "account" | "stream" | "manager" | "comments" | "settings";
+type TabType = "account" | "stream" | "manager" | "comments" | "obs" | "settings";
 
 const mainTabs = [
   { id: "account" as const, label: "个人信息", icon: User },
   { id: "stream" as const, label: "开播设置", icon: Radio },
   { id: "manager" as const, label: "房间管理", icon: Shield },
   { id: "comments" as const, label: "弹幕", icon: MessageSquare },
+  { id: "obs" as const, label: "OBS 设置", icon: Plug },
 ];
 
 const bottomTabs = [{ id: "settings" as const, label: "设置", icon: Settings }];

@@ -31,6 +31,14 @@ export interface Stream {
   key: string;
 }
 
+export interface OBSConfig {
+  address: string;
+  password?: string;
+  autoConnect: boolean;
+  autoUpdateSettings: boolean;
+  autoStartStopStreaming: boolean;
+}
+
 export interface AppConfig {
   cookies: AppCookie[];
   areaList: ParentArea[];
@@ -48,6 +56,7 @@ export interface AppConfig {
   roomToken: string;
   isOpenLive: boolean;
   streams: Stream[];
+  obsConfig: OBSConfig;
 }
 
 export const DEFAULT_CONFIG: AppConfig = {
@@ -67,4 +76,11 @@ export const DEFAULT_CONFIG: AppConfig = {
   roomToken: "",
   isOpenLive: false,
   streams: [],
+  obsConfig: {
+    address: "ws://localhost:4455",
+    password: "",
+    autoConnect: false,
+    autoUpdateSettings: false,
+    autoStartStopStreaming: false,
+  },
 };

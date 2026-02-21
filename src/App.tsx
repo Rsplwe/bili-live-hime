@@ -3,15 +3,18 @@ import { AppSidebar, type TabType } from "@/components/app-sidebar";
 import { LiveStreamSettings } from "@/view/live-stream-settings";
 import { MoreSettings } from "@/view/more-settings";
 import { LiveComments } from "@/view/live-comments";
+import { OBSSettings } from "@/view/obs-settings";
 import { Navbar } from "@/components/navbar";
 import { StatusBar } from "@/components/status-bar";
 import { LoginScreen } from "@/screens/login-screen";
 import { LoadingScreen } from "@/screens/loading-screen";
 import { useConfigStore } from "@/store/config";
 import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
 import { UserProfile } from "@/view/user-profile";
 import { LiveRoomManager } from "@/view/manager/live-room-manager";
 import { useWsStore } from "./store/ws";
+import { connectToOBS } from "@/lib/obs-manager";
 
 type AuthState = "loading" | "login" | "authenticated";
 
@@ -23,6 +26,7 @@ export default function App() {
   const isInitialized = useConfigStore((state) => state.isInitialized);
   const theme = useConfigStore((state) => state.config.theme);
   const initListeners = useWsStore((state) => state.initListeners);
+  const obsConfig = useConfigStore((state) => state.config.obsConfig);
 
   useEffect(() => {
     const listener = initListeners();
@@ -31,6 +35,23 @@ export default function App() {
       listener.then((f) => f());
     };
   }, [initListeners]);
+
+  // 启动时自动连接 OBS
+  useEffect(() => {
+    if (isInitialized && obsConfig.autoConnect) {
+      connectToOBS({
+        address: obsConfig.address,
+        password: obsConfig.password || undefined,
+      })
+        .then(() => {
+          toast.success("OBS 已自动连接");
+        })
+        .catch((error) => {
+          console.error("自动连接 OBS 失败:", error);
+          // 不显示错误提示，避免启动时频繁打扰用户
+        });
+    }
+  }, [isInitialized, obsConfig]);
 
   useEffect(() => {
     if (!isInitialized) {
@@ -79,6 +100,7 @@ export default function App() {
                   {activeTab === "stream" && <LiveStreamSettings />}
                   {activeTab === "comments" && <LiveComments />}
                   {activeTab === "manager" && <LiveRoomManager />}
+                  {activeTab === "obs" && <OBSSettings />}
                   {activeTab === "settings" && <MoreSettings />}
                 </div>
               </main>
