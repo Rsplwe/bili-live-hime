@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Play, Square, Copy, Check } from "@hugeicons/core-free-icons";
+import { Play, Square, Copy, Check, Plug } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,11 +34,24 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import {
+  connectToOBS,
+  disconnectOBS,
+  updateOBSStreamSettings,
+  startOBSStreaming,
+  stopOBSStreaming,
+} from "@/lib/obs-manager";
 
 export function LiveStreamSettings() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
   const [isQrDialogOpen, setIsQrDialogOpen] = useState<boolean>(false);
+  const [obsAddress, setObsAddress] = useState<string>("ws://localhost:4455");
+  const [obsPassword, setObsPassword] = useState<string>("");
+  const [autoUpdateObs, setAutoUpdateObs] = useState<boolean>(false);
+  const [autoStartObs, setAutoStartObs] = useState<boolean>(false);
+  const [obsConnected, setObsConnected] = useState<boolean>(false);
 
   const updateConfig = useConfigStore((s) => s.updateConfig);
   const areaList = useConfigStore((s) => s.config.areaList);
@@ -127,6 +140,27 @@ export function LiveStreamSettings() {
           });
           result.sort((a, b) => a.type.localeCompare(b.type));
           updateConfig({ streams: result });
+          
+          // 如果启用了自动更新 OBS 且 OBS 已连接，则更新 OBS 推流设置
+          if (autoUpdateObs && obsConnected && result.length > 0) {
+            try {
+              await handleUpdateOBSStream(result[0]);
+            } catch (error) {
+              console.error("Update OBS stream settings:", error);
+            }
+          }
+          
+          // 如果启用了自动开始 OBS 推流且 OBS 已连接，则开始推流
+          if (autoStartObs && obsConnected) {
+            try {
+              await startOBSStreaming();
+              toast.success("OBS 推流已自动开始");
+            } catch (error) {
+              console.error("Start OBS streaming:", error);
+              toast.warning("OBS 推流启动失败：" + (error as Error).message);
+            }
+          }
+          
           break;
         }
         default:
@@ -140,6 +174,16 @@ export function LiveStreamSettings() {
   };
 
   const handleEndStream = async () => {
+    // 如果启用了自动停止 OBS 推流且 OBS 已连接，则停止推流
+    if (autoStartObs && obsConnected) {
+      try {
+        await stopOBSStreaming();
+        toast.success("OBS 推流已自动停止");
+      } catch (error) {
+        console.error("Stop OBS streaming:", error);
+        toast.warning("OBS 推流停止失败：" + (error as Error).message);
+      }
+    }
     setIsStreaming(false);
     await stopLive();
   };
@@ -159,6 +203,36 @@ export function LiveStreamSettings() {
     try {
       await updateRoomArea(areaId);
       toast.success("直播间分区更新成功");
+    } catch (error) {
+      toast.error((error as Error).message);
+    }
+  };
+
+  const handleConnectOBS = async () => {
+    try {
+      await connectToOBS({ address: obsAddress, password: obsPassword || undefined });
+      setObsConnected(true);
+      toast.success("OBS 连接成功");
+    } catch (error) {
+      setObsConnected(false);
+      toast.error((error as Error).message);
+    }
+  };
+
+  const handleDisconnectOBS = async () => {
+    try {
+      await disconnectOBS();
+      setObsConnected(false);
+      toast.success("OBS 已断开连接");
+    } catch (error) {
+      toast.error((error as Error).message);
+    }
+  };
+
+  const handleUpdateOBSStream = async (stream: Stream) => {
+    try {
+      await updateOBSStreamSettings(stream);
+      toast.success("OBS 推流设置已更新");
     } catch (error) {
       toast.error((error as Error).message);
     }
@@ -283,6 +357,99 @@ export function LiveStreamSettings() {
           </div>
         </CardContent>
       </Card>
+      
+      <Card>
+        <CardContent className="space-y-3">
+          <div className="flex items-center gap-2">
+            <HugeiconsIcon icon={Plug} className="w-4 h-4" />
+            <div className="text-sm font-medium">OBS 集成</div>
+            {obsConnected && (
+              <span className="ml-auto flex items-center gap-1.5 px-2 py-0.5 bg-green-500/10 text-green-500 text-xs rounded-full">
+                <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                已连接
+              </span>
+            )}
+          </div>
+          <Separator />
+          <div className="space-y-3">
+            <div className="space-y-2">
+              <Label htmlFor="obs-address" className="text-xs text-muted-foreground">
+                OBS WebSocket 地址
+              </Label>
+              <Input
+                id="obs-address"
+                value={obsAddress}
+                onChange={(e) => setObsAddress(e.target.value)}
+                placeholder="ws://localhost:4455"
+                disabled={obsConnected}
+                className="font-mono text-xs"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="obs-password" className="text-xs text-muted-foreground">
+                OBS WebSocket 密码（可选）
+              </Label>
+              <Input
+                id="obs-password"
+                type="password"
+                value={obsPassword}
+                onChange={(e) => setObsPassword(e.target.value)}
+                placeholder="如果设置了密码请填写"
+                disabled={obsConnected}
+                className="font-mono text-xs"
+              />
+            </div>
+            <div className="flex gap-2">
+              {!obsConnected ? (
+                <Button
+                  variant="outline"
+                  onClick={handleConnectOBS}
+                  className="flex-1">
+                  <HugeiconsIcon icon={Plug} className="mr-2 w-4 h-4" />
+                  连接 OBS
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  onClick={handleDisconnectOBS}
+                  className="flex-1">
+                  断开连接
+                </Button>
+              )}
+            </div>
+          </div>
+          <Separator />
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label className="text-sm">自动更新推流设置</Label>
+                <p className="text-xs text-muted-foreground">
+                  开播时自动将推流配置同步到 OBS
+                </p>
+              </div>
+              <Switch
+                checked={autoUpdateObs}
+                onCheckedChange={setAutoUpdateObs}
+                disabled={!obsConnected}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label className="text-sm">自动开始/停止推流</Label>
+                <p className="text-xs text-muted-foreground">
+                  开播/停播时自动控制 OBS 推流状态
+                </p>
+              </div>
+              <Switch
+                checked={autoStartObs}
+                onCheckedChange={setAutoStartObs}
+                disabled={!obsConnected}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
       <Dialog modal open={isQrDialogOpen} onOpenChange={setIsQrDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
