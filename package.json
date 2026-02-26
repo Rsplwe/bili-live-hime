@@ -15,7 +15,7 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "@hugeicons/core-free-icons": "^3.1.1",
+    "@hugeicons/core-free-icons": "^3.3.0",
     "@hugeicons/react": "^1.1.5",
     "@tailwindcss/vite": "^4.2.1",
     "@tanstack/react-query": "^5.90.21",
@@ -46,7 +46,7 @@
     "@protobuf-ts/plugin": "^2.11.1",
     "@tauri-apps/cli": "^2",
     "@types/lodash-es": "^4.17.12",
-    "@types/node": "^25.3.0",
+    "@types/node": "^25.3.2",
     "@types/pako": "^2.0.4",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
