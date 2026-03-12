@@ -81,14 +81,14 @@ export function LiveComments() {
   const getRankIcon = (rank: number) => {
     if (rank === 1)
       return (
-        <HugeiconsIcon icon={Trophy} className="w-5 h-5 text-yellow-500" />
+        <HugeiconsIcon icon={Trophy} className="h-5 w-5 text-yellow-500" />
       );
     if (rank === 2)
-      return <HugeiconsIcon icon={Medal} className="w-5 h-5 text-slate-400" />;
+      return <HugeiconsIcon icon={Medal} className="h-5 w-5 text-slate-400" />;
     if (rank === 3)
-      return <HugeiconsIcon icon={Award} className="w-5 h-5 text-amber-600" />;
+      return <HugeiconsIcon icon={Award} className="h-5 w-5 text-amber-600" />;
     return (
-      <span className="w-5 h-5 flex items-center justify-center text-sm text-muted-foreground">
+      <span className="flex h-5 w-5 items-center justify-center text-sm text-muted-foreground">
         {rank}
       </span>
     );
@@ -99,7 +99,7 @@ export function LiveComments() {
       return (
         <div
           key={comment.id}
-          className="text-xs text-muted-foreground py-1 px-2">
+          className="px-2 py-1 text-xs text-muted-foreground">
           <span className="text-primary">{comment.username}</span>{" "}
           {comment.message}
         </div>
@@ -110,7 +110,7 @@ export function LiveComments() {
       return (
         <div
           key={comment.id}
-          className="flex items-center gap-2 py-2 px-3 bg-primary/10 rounded-lg my-1">
+          className="my-1 flex items-center gap-2 rounded-lg bg-primary/10 px-3 py-2">
           <HugeiconsIcon icon={Gift} className="text-primary" />
           <span className="text-sm">
             <span className="font-medium text-primary">{comment.username}</span>
@@ -126,31 +126,31 @@ export function LiveComments() {
     return (
       <div
         key={comment.id}
-        className="flex items-start gap-2 py-1.5 px-2 hover:bg-muted/30 rounded-md">
-        <Avatar className="w-6 h-6 mt-0.5">
+        className="flex items-start gap-2 rounded-md px-2 py-1.5 hover:bg-muted/30">
+        <Avatar className="mt-0.5 h-6 w-6">
           <AvatarImage src={comment.avatar || "/akarin.webp"} />
           <AvatarFallback className="text-xs">
             {comment.username.slice(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
-            <span className="text-sm font-medium text-primary truncate">
+            <span className="truncate text-sm font-medium text-primary">
               {comment.username}
             </span>
             {comment.badge && (
-              <Badge variant="secondary" className="text-xs py-0 px-1.5 h-4">
+              <Badge variant="secondary" className="h-4 px-1.5 py-0 text-xs">
                 {comment.badge}
               </Badge>
             )}
-            <span className="text-xs text-muted-foreground ml-auto">
+            <span className="ml-auto text-xs text-muted-foreground">
               {comment.timestamp.toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
               })}
             </span>
           </div>
-          <p className="text-sm text-foreground wrap-break-word">
+          <p className="text-sm wrap-break-word text-foreground">
             {comment.message}
           </p>
         </div>
@@ -163,21 +163,21 @@ export function LiveComments() {
     return (
       <div
         key={comment.id}
-        className={`relative overflow-hidden rounded-lg my-2 bg-linear-to-r ${bgColor} p-0.5`}>
-        <div className="bg-background/95 rounded-lg p-3">
-          <div className="flex items-center gap-2 mb-1">
-            <Avatar className="w-6 h-6">
+        className={`relative my-2 overflow-hidden rounded-lg bg-linear-to-r ${bgColor} p-0.5`}>
+        <div className="rounded-lg bg-background/95 p-3">
+          <div className="mb-1 flex items-center gap-2">
+            <Avatar className="h-6 w-6">
               <AvatarImage src={comment.avatar || "/akarin.webp"} />
               <AvatarFallback className="text-xs">
                 {comment.username.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <span className="font-bold text-sm">{comment.username}</span>
+            <span className="text-sm font-bold">{comment.username}</span>
             <Badge
-              className={`bg-linear-to-r ${bgColor} text-white border-0 text-xs`}>
+              className={`bg-linear-to-r ${bgColor} border-0 text-xs text-white`}>
               ¥{comment.amount || 0}
             </Badge>
-            <span className="text-xs text-muted-foreground ml-auto">
+            <span className="ml-auto text-xs text-muted-foreground">
               {comment.timestamp.toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
@@ -209,7 +209,7 @@ export function LiveComments() {
 
     return (
       <div
-        className="flex items-center h-4.5 rounded-[6px] border text-[11px] leading-none select-none"
+        className="flex h-4.5 items-center rounded-[6px] border text-[11px] leading-none select-none"
         style={{
           background: `linear-gradient(90deg, ${bgStart}, ${bgEnd})`,
           borderColor: border_color,
@@ -241,13 +241,13 @@ export function LiveComments() {
   }) => {
     return (
       <div
-        className="flex items-center h-4.5 rounded-lg px-1.5 text-[10px] whitespace-nowrap select-none"
+        className="flex h-4.5 items-center rounded-lg px-1.5 text-[10px] whitespace-nowrap select-none"
         style={{
           backgroundColor: `${color}14`,
           border: `1px solid ${color}33`,
           color,
         }}>
-        <HugeiconsIcon icon={Anchor} className="w-3.5 h-3.5 mr-1" />
+        <HugeiconsIcon icon={Anchor} className="mr-1 h-3.5 w-3.5" />
         {title}
       </div>
     );
@@ -305,24 +305,24 @@ export function LiveComments() {
           setActiveTab(v as "all" | "superchat" | "audience")
         }>
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="all" className="gap-1 text-xs px-2">
-            <HugeiconsIcon icon={Message} className="w-3.5 h-3.5" />
+          <TabsTrigger value="all" className="gap-1 px-2 text-xs">
+            <HugeiconsIcon icon={Message} className="h-3.5 w-3.5" />
             弹幕
             <Badge variant="secondary" className="ml-0.5 h-4 px-1 text-xs">
               {regularComments.length}
             </Badge>
           </TabsTrigger>
-          <TabsTrigger value="superchat" className="gap-1 text-xs px-2">
-            <HugeiconsIcon icon={Sparkles} className="w-3.5 h-3.5" />
+          <TabsTrigger value="superchat" className="gap-1 px-2 text-xs">
+            <HugeiconsIcon icon={Sparkles} className="h-3.5 w-3.5" />
             醒目留言
             <Badge
               variant="secondary"
-              className="ml-0.5 h-4 px-1 text-xs bg-linear-to-r from-yellow-500/20 to-orange-500/20">
+              className="ml-0.5 h-4 bg-linear-to-r from-yellow-500/20 to-orange-500/20 px-1 text-xs">
               {superChatComments.length}
             </Badge>
           </TabsTrigger>
-          <TabsTrigger value="audience" className="gap-1 text-xs px-2">
-            <HugeiconsIcon icon={Users} className="w-3.5 h-3.5" />
+          <TabsTrigger value="audience" className="gap-1 px-2 text-xs">
+            <HugeiconsIcon icon={Users} className="h-3.5 w-3.5" />
             在线榜
           </TabsTrigger>
         </TabsList>
@@ -352,27 +352,27 @@ export function LiveComments() {
                 .map((user, index) => (
                   <div
                     key={user.rank}
-                    className={`flex items-center gap-3 p-3 hover:bg-muted/50 transition-colors ${
+                    className={`flex items-center gap-3 p-3 transition-colors hover:bg-muted/50 ${
                       index < 3
                         ? "bg-linear-to-r from-primary/5 to-transparent"
                         : ""
                     }`}>
-                    <div className="w-6 flex items-center justify-center">
+                    <div className="flex w-6 items-center justify-center">
                       {getRankIcon(index + 1)}
                     </div>
-                    <Avatar className="w-8 h-8 border-2 border-background">
+                    <Avatar className="h-8 w-8 border-2 border-background">
                       <AvatarImage src={user.face || "/placeholder.svg"} />
                       <AvatarFallback className="text-xs">
                         {user.name.slice(0, 2).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex-1 min-w-0">
+                    <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-sm font-medium truncate">
+                        <span className="truncate text-sm font-medium">
                           {user.name}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1.5 flex-wrap">
+                      <div className="flex flex-wrap items-center gap-1.5">
                         {user.wealth_level > 0 && (
                           <TitleBadge title={`${user.wealth_level}`} />
                         )}

@@ -80,15 +80,15 @@ export function LoadingScreen({ onValidationComplete }: LoadingScreenProps) {
   }, [onValidationComplete]);
 
   return (
-    <div className="flex-1 flex items-center justify-center p-8">
+    <div className="flex flex-1 items-center justify-center p-8">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
           <CardTitle className="text-lg">哔哩哔哩直播姬（仮）</CardTitle>
           <CardDescription>初始化应用</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-4">
-          <Spinner className="w-8 h-8 text-primary" />
-          <p className="text-sm text-muted-foreground text-center">{status}</p>
+          <Spinner className="h-8 w-8 text-primary" />
+          <p className="text-center text-sm text-muted-foreground">{status}</p>
         </CardContent>
       </Card>
     </div>

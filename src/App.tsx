@@ -71,8 +71,8 @@ export default function App() {
           <>
             <div className="flex flex-1 overflow-hidden">
               <AppSidebar activeTab={activeTab} onTabChange={setActiveTab} />
-              <main className="flex-1 p-8 overflow-y-auto">
-                <div className="max-w-2xl mx-auto">
+              <main className="flex-1 overflow-y-auto p-8">
+                <div className="mx-auto max-w-2xl">
                   {activeTab === "account" && (
                     <UserProfile onLogout={handleLogout} />
                   )}
@@ -90,12 +90,12 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-background shadow-2xl overflow-hidden border border-border">
+    <div className="flex h-screen flex-col overflow-hidden border border-border bg-background shadow-2xl">
       <Navbar />
       {isInitialized ? (
         renderContent()
       ) : (
-        <div className="flex-1 flex items-center justify-center p-8">
+        <div className="flex flex-1 items-center justify-center p-8">
           初始化中...
         </div>
       )}

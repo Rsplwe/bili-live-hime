@@ -18,7 +18,7 @@ export function StatusBar() {
   };
 
   return (
-    <div className="h-7 border-t border-border bg-muted/50 px-4 flex items-center justify-between text-xs text-muted-foreground">
+    <div className="flex h-7 items-center justify-between border-t border-border bg-muted/50 px-4 text-xs text-muted-foreground">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-1.5">
           <HugeiconsIcon icon={Flame} className="h-3.5 w-3.5 text-orange-500" />
@@ -41,8 +41,8 @@ export function StatusBar() {
           variant="outline"
           className={
             connected
-              ? "text-green-600 border-green-600/30 bg-green-500/10"
-              : "text-destructive border-destructive/30 bg-destructive/10"
+              ? "border-green-600/30 bg-green-500/10 text-green-600"
+              : "border-destructive/30 bg-destructive/10 text-destructive"
           }>
           {connected ? (
             <>

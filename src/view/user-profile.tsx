@@ -38,12 +38,12 @@ export function UserProfile({ onLogout }: UserProfileProps) {
     <div className="space-y-4">
       <Card>
         <CardContent className="flex flex-col items-center gap-3 pt-6">
-          <Avatar className="w-20 h-20 border">
+          <Avatar className="h-20 w-20 border">
             <AvatarImage
               src={avatar || "/akarin.webp"}
               alt={username ? username : "user"}
             />
-            <AvatarFallback className="bg-primary text-primary-foreground text-xl font-semibold">
+            <AvatarFallback className="bg-primary text-xl font-semibold text-primary-foreground">
               {(username ? username : "user").slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
@@ -56,9 +56,9 @@ export function UserProfile({ onLogout }: UserProfileProps) {
         </CardContent>
       </Card>
 
-      <div className="p-3 bg-muted rounded-lg">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-xs text-muted-foreground uppercase tracking-wide">
+      <div className="rounded-lg bg-muted p-3">
+        <div className="mb-1 flex items-center justify-between">
+          <span className="text-xs tracking-wide text-muted-foreground uppercase">
             User ID
           </span>
           <Button
@@ -82,9 +82,9 @@ export function UserProfile({ onLogout }: UserProfileProps) {
         <p className="font-mono text-sm text-foreground">{uid}</p>
       </div>
 
-      <div className="p-3 bg-muted rounded-lg">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-xs text-muted-foreground uppercase tracking-wide">
+      <div className="rounded-lg bg-muted p-3">
+        <div className="mb-1 flex items-center justify-between">
+          <span className="text-xs tracking-wide text-muted-foreground uppercase">
             直播间 ID
           </span>
           <Button

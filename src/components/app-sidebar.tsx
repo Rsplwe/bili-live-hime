@@ -27,15 +27,15 @@ interface AppSidebarProps {
 
 export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
   return (
-    <aside className="w-56 h-full shrink-0 bg-sidebar border-r border-sidebar-border flex flex-col">
-      <nav className="flex flex-col gap-1 p-2 flex-1">
+    <aside className="flex h-full w-56 shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
+      <nav className="flex flex-1 flex-col gap-1 p-2">
         {mainTabs.map((tab) => (
           <Button
             key={tab.id}
             variant={activeTab === tab.id ? "secondary" : "ghost"}
             onClick={() => onTabChange(tab.id)}
             className={cn(
-              "w-full justify-start gap-3 h-auto py-2.5",
+              "h-auto w-full justify-start gap-3 py-2.5",
               activeTab === tab.id && "bg-sidebar-accent text-primary",
             )}>
             <HugeiconsIcon icon={tab.icon} />
@@ -43,14 +43,14 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
           </Button>
         ))}
       </nav>
-      <nav className="flex flex-col gap-1 p-2 border-t border-sidebar-border">
+      <nav className="flex flex-col gap-1 border-t border-sidebar-border p-2">
         {bottomTabs.map((tab) => (
           <Button
             key={tab.id}
             variant={activeTab === tab.id ? "secondary" : "ghost"}
             onClick={() => onTabChange(tab.id)}
             className={cn(
-              "w-full justify-start gap-3 h-auto py-2.5",
+              "h-auto w-full justify-start gap-3 py-2.5",
               activeTab === tab.id && "bg-sidebar-accent text-primary",
             )}>
             <HugeiconsIcon icon={tab.icon} />

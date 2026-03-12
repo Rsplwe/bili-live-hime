@@ -26,12 +26,12 @@ export function MoreSettings() {
             {theme === "dark" ? (
               <HugeiconsIcon
                 icon={Moon}
-                className="w-5 h-5 text-muted-foreground"
+                className="h-5 w-5 text-muted-foreground"
               />
             ) : (
               <HugeiconsIcon
                 icon={Sun}
-                className="w-5 h-5 text-muted-foreground"
+                className="h-5 w-5 text-muted-foreground"
               />
             )}
             <div>
@@ -53,45 +53,45 @@ export function MoreSettings() {
       <div className="space-y-1">
         <Button
           variant="ghost"
-          className="w-full justify-between h-auto py-3"
+          className="h-auto w-full justify-between py-3"
           onClick={() => {
             openUrl("https://github.com/Rsplwe/bili-live-hime/issues");
           }}>
           <div className="flex items-center gap-3">
             <HugeiconsIcon
               icon={Bug}
-              className="w-5 h-5 text-muted-foreground"
+              className="h-5 w-5 text-muted-foreground"
             />
             <span className="text-sm">报告错误</span>
           </div>
           <HugeiconsIcon
             icon={ExternalLink}
-            className="w-4 h-4 text-muted-foreground"
+            className="h-4 w-4 text-muted-foreground"
           />
         </Button>
         <Button
           variant="ghost"
-          className="w-full justify-between h-auto py-3"
+          className="h-auto w-full justify-between py-3"
           onClick={() => {
             openUrl("https://github.com/Rsplwe/bili-live-hime");
           }}>
           <div className="flex items-center gap-3">
             <HugeiconsIcon
               icon={Folders}
-              className="w-5 h-5 text-muted-foreground"
+              className="h-5 w-5 text-muted-foreground"
             />
             <span className="text-sm">项目主页</span>
           </div>
           <HugeiconsIcon
             icon={ExternalLink}
-            className="w-4 h-4 text-muted-foreground"
+            className="h-4 w-4 text-muted-foreground"
           />
         </Button>
       </div>
 
       <Separator />
-      <div className="text-center space-y-1">
-        <p className="text-xs text-muted-foreground pb-2">
+      <div className="space-y-1 text-center">
+        <p className="pb-2 text-xs text-muted-foreground">
           本项目为<b>非官方实现</b>，与哔哩哔哩官方无任何关联
         </p>
         <p className="text-xs text-muted-foreground">哔哩哔哩直播姬（仮）</p>

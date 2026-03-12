@@ -301,8 +301,8 @@ export function LiveStreamSettings() {
       </Dialog>
       <div className="space-y-2">
         {isOpenLive && (
-          <div className="flex items-center gap-2 px-3 py-2 bg-primary/10 border border-primary/20 rounded-lg">
-            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+          <div className="flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/10 px-3 py-2">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
             <span className="text-xs text-foreground">直播中</span>
           </div>
         )}
@@ -312,7 +312,7 @@ export function LiveStreamSettings() {
           <CardContent className="space-y-3">
             <div className="text-sm">流媒体凭证</div>
             <Tabs defaultValue="rtmp-1" className="w-full">
-              <TabsList className="w-full mb-4">
+              <TabsList className="mb-4 w-full">
                 {streams.map((stream) => (
                   <TabsTrigger key={stream.type} value={stream.type}>
                     {stream.type.toUpperCase()}
@@ -323,7 +323,7 @@ export function LiveStreamSettings() {
                 <TabsContent
                   key={stream.type}
                   value={stream.type}
-                  className="space-y-3 mt-0">
+                  className="mt-0 space-y-3">
                   <div className="space-y-1.5">
                     <Label className="text-xs text-muted-foreground">
                       服务器地址
@@ -341,10 +341,10 @@ export function LiveStreamSettings() {
                         {copiedField === stream.type ? (
                           <HugeiconsIcon
                             icon={Check}
-                            className="w-4 h-4 text-primary"
+                            className="h-4 w-4 text-primary"
                           />
                         ) : (
-                          <HugeiconsIcon icon={Copy} className="w-4 h-4" />
+                          <HugeiconsIcon icon={Copy} className="h-4 w-4" />
                         )}
                       </Button>
                     </div>
@@ -368,10 +368,10 @@ export function LiveStreamSettings() {
                         {copiedField === `${stream.type}-key` ? (
                           <HugeiconsIcon
                             icon={Check}
-                            className="w-4 h-4 text-primary"
+                            className="h-4 w-4 text-primary"
                           />
                         ) : (
-                          <HugeiconsIcon icon={Copy} className="w-4 h-4" />
+                          <HugeiconsIcon icon={Copy} className="h-4 w-4" />
                         )}
                       </Button>
                     </div>

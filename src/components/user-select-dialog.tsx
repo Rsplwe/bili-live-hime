@@ -39,7 +39,7 @@ export function UserSelectDialog({
         <DialogHeader>
           <DialogTitle>选择用户</DialogTitle>
         </DialogHeader>
-        <div className="space-y-2 max-h-80 overflow-auto">
+        <div className="max-h-80 space-y-2 overflow-auto">
           {users.map((user) => {
             const selected = user.id === selectedUserId;
 
@@ -49,7 +49,7 @@ export function UserSelectDialog({
                 type="button"
                 onClick={() => setSelectedUserId(user.id)}
                 className={cn(
-                  "w-full flex items-center gap-3 rounded-lg border p-3 text-left transition",
+                  "flex w-full items-center gap-3 rounded-lg border p-3 text-left transition",
                   selected ? "border-primary bg-primary/5" : "hover:bg-muted",
                 )}>
                 <Avatar className="h-10 w-10">
@@ -77,7 +77,7 @@ export function UserSelectDialog({
           })}
 
           {users.length === 0 && (
-            <div className="text-sm text-muted-foreground text-center py-8">
+            <div className="py-8 text-center text-sm text-muted-foreground">
               未搜索到用户
             </div>
           )}

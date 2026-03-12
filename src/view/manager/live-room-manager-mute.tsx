@@ -17,10 +17,10 @@ export function LiveRoomManagerMute() {
           全局禁言
         </TabsTrigger>
       </TabsList>
-      <TabsContent value="list" className="space-y-4 mt-4">
+      <TabsContent value="list" className="mt-4 space-y-4">
         <LiveRoomManagerMuteUser />
       </TabsContent>
-      <TabsContent value="global" className="space-y-4 mt-4">
+      <TabsContent value="global" className="mt-4 space-y-4">
         <LiveRoomManagerMuteGlobal />
       </TabsContent>
     </Tabs>

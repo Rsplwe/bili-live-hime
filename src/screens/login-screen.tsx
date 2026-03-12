@@ -16,7 +16,7 @@ export function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
   const [loginMethod, setLoginMethod] = useState<LoginMethod>("qr");
 
   return (
-    <div className="flex-1 flex items-center justify-center p-8">
+    <div className="flex flex-1 items-center justify-center p-8">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-xl">选择登入方式</CardTitle>

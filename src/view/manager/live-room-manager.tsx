@@ -19,17 +19,17 @@ export function LiveRoomManager() {
           <Tabs
             value={activeSection}
             onValueChange={(v) => setActiveSection(v as typeof activeSection)}>
-            <TabsList className="grid w-full grid-cols-3 mb-4">
+            <TabsList className="mb-4 grid w-full grid-cols-3">
               <TabsTrigger value="admin" className="gap-2">
-                <HugeiconsIcon icon={Crown} className="w-4 h-4" />
+                <HugeiconsIcon icon={Crown} className="h-4 w-4" />
                 房管设置
               </TabsTrigger>
               <TabsTrigger value="mute" className="gap-2">
-                <HugeiconsIcon icon={UserX} className="w-4 h-4" />
+                <HugeiconsIcon icon={UserX} className="h-4 w-4" />
                 禁言设置
               </TabsTrigger>
               <TabsTrigger value="blocked" className="gap-2">
-                <HugeiconsIcon icon={CommentBlockIcon} className="w-4 h-4" />
+                <HugeiconsIcon icon={CommentBlockIcon} className="h-4 w-4" />
                 屏蔽词
               </TabsTrigger>
             </TabsList>

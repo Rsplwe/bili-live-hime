@@ -178,17 +178,17 @@ export function LiveRoomManagerMuteUser() {
     switch (state) {
       case "loading":
         return (
-          <div className="h-full flex items-center justify-center p-8">
+          <div className="flex h-full items-center justify-center p-8">
             <Spinner />
             <Label>加载中...</Label>
           </div>
         );
       case "error":
         return (
-          <div className="h-full flex flex-col items-center justify-center gap-4 p-8 text-center">
+          <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center">
             <HugeiconsIcon
               icon={XCircle}
-              className="w-6 h-6 text-destructive"
+              className="h-6 w-6 text-destructive"
             />
             <div className="space-y-1">
               <p className="text-sm font-medium text-foreground">加载失败</p>
@@ -201,14 +201,14 @@ export function LiveRoomManagerMuteUser() {
               size="sm"
               className="gap-1.5"
               onClick={fetchAllMutedUsers}>
-              <HugeiconsIcon icon={RefreshCw} className="w-4 h-4" />
+              <HugeiconsIcon icon={RefreshCw} className="h-4 w-4" />
               刷新
             </Button>
           </div>
         );
       case "empty":
         return (
-          <div className="flex items-center justify-center h-full text-muted-foreground text-sm p-8">
+          <div className="flex h-full items-center justify-center p-8 text-sm text-muted-foreground">
             <div className="space-y-3">尚未有已禁言的用户</div>
           </div>
         );
@@ -218,30 +218,30 @@ export function LiveRoomManagerMuteUser() {
             {mutedUsers.map((user) => (
               <div
                 key={user.tuid}
-                className="flex items-center justify-between hover:bg-muted/30 p-3 gap-4">
+                className="flex items-center justify-between gap-4 p-3 hover:bg-muted/30">
                 <div className="flex items-start gap-3">
-                  <Avatar className="w-8 h-8">
+                  <Avatar className="h-8 w-8">
                     <AvatarImage src={user.face || "/akarin.webp"} />
                     <AvatarFallback className="text-xs">
                       {user.tname.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="space-y-0.5">
-                    <p className="font-medium text-sm">
+                    <p className="text-sm font-medium">
                       {user.tname}{" "}
                       <span className="text-muted-foreground">
                         (UID: {user.tuid})
                       </span>
                     </p>
-                    <p className="text-xs text-muted-foreground flex items-center">
-                      <HugeiconsIcon icon={Clock} className="w-3 h-3 mr-1" />
+                    <p className="flex items-center text-xs text-muted-foreground">
+                      <HugeiconsIcon icon={Clock} className="mr-1 h-3 w-3" />
                       禁言至 {user.block_end_time}
                     </p>
-                    <p className="text-xs text-muted-foreground flex items-center gap-1">
-                      <HugeiconsIcon icon={UserX} className="w-3 h-3" />
+                    <p className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <HugeiconsIcon icon={UserX} className="h-3 w-3" />
                       {user.name}
                       <span className="mx-1">·</span>
-                      <HugeiconsIcon icon={Calendar} className="w-3 h-3" />
+                      <HugeiconsIcon icon={Calendar} className="h-3 w-3" />
                       {user.ctime}
                     </p>
                   </div>
@@ -299,7 +299,7 @@ export function LiveRoomManagerMuteUser() {
         <div className="flex items-center justify-between">
           <Label>已禁言用户</Label>
         </div>
-        <ScrollArea className="h-[calc(100vh-420px)] border rounded-md">
+        <ScrollArea className="h-[calc(100vh-420px)] rounded-md border">
           {content()}
         </ScrollArea>
       </div>

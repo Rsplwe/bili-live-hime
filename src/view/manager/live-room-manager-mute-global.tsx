@@ -120,17 +120,17 @@ export function LiveRoomManagerMuteGlobal() {
     switch (state) {
       case "loading":
         return (
-          <div className="h-full flex items-center justify-center p-8">
+          <div className="flex h-full items-center justify-center p-8">
             <Spinner />
             <Label>加载中...</Label>
           </div>
         );
       case "error":
         return (
-          <div className="h-full flex flex-col items-center justify-center gap-4 p-8 text-center">
+          <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center">
             <HugeiconsIcon
               icon={XCircle}
-              className="w-6 h-6 text-destructive"
+              className="h-6 w-6 text-destructive"
             />
             <div className="space-y-1">
               <p className="text-sm font-medium text-foreground">加载失败</p>
@@ -143,7 +143,7 @@ export function LiveRoomManagerMuteGlobal() {
               size="sm"
               className="gap-1.5"
               onClick={fetchRoomSilentConfig}>
-              <HugeiconsIcon icon={RefreshCw} className="w-4 h-4" />
+              <HugeiconsIcon icon={RefreshCw} className="h-4 w-4" />
               刷新
             </Button>
           </div>
@@ -152,22 +152,22 @@ export function LiveRoomManagerMuteGlobal() {
         return (
           <div className="space-y-4">
             <Label>全局禁言规则</Label>
-            <div className="space-y-3 border rounded-md p-4">
+            <div className="space-y-3 rounded-md border p-4">
               <div
-                className={`flex items-center gap-3 p-3 rounded-md cursor-pointer transition-colors ${globalMute.type === "wealth" ? "bg-primary/10 border border-primary" : "hover:bg-muted"}`}
+                className={`flex cursor-pointer items-center gap-3 rounded-md p-3 transition-colors ${globalMute.type === "wealth" ? "border border-primary bg-primary/10" : "hover:bg-muted"}`}
                 onClick={() =>
                   setGlobalMute({ ...globalMute, type: "wealth" })
                 }>
                 <div
-                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${globalMute.type === "wealth" ? "border-primary" : "border-muted-foreground"}`}>
+                  className={`flex h-4 w-4 items-center justify-center rounded-full border-2 ${globalMute.type === "wealth" ? "border-primary" : "border-muted-foreground"}`}>
                   {globalMute.type === "wealth" && (
-                    <div className="w-2 h-2 rounded-full bg-primary" />
+                    <div className="h-2 w-2 rounded-full bg-primary" />
                   )}
                 </div>
                 <span className="text-sm">荣耀等级</span>
               </div>
               {globalMute.type === "wealth" && (
-                <div className="space-y-2 pl-10 pr-3">
+                <div className="space-y-2 pr-3 pl-10">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">阈值</span>
                     <span className="font-medium">
@@ -192,18 +192,18 @@ export function LiveRoomManagerMuteGlobal() {
                 </div>
               )}
               <div
-                className={`flex items-center gap-3 p-3 rounded-md cursor-pointer transition-colors ${globalMute.type === "medal" ? "bg-primary/10 border border-primary" : "hover:bg-muted"}`}
+                className={`flex cursor-pointer items-center gap-3 rounded-md p-3 transition-colors ${globalMute.type === "medal" ? "border border-primary bg-primary/10" : "hover:bg-muted"}`}
                 onClick={() => setGlobalMute({ ...globalMute, type: "medal" })}>
                 <div
-                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${globalMute.type === "medal" ? "border-primary" : "border-muted-foreground"}`}>
+                  className={`flex h-4 w-4 items-center justify-center rounded-full border-2 ${globalMute.type === "medal" ? "border-primary" : "border-muted-foreground"}`}>
                   {globalMute.type === "medal" && (
-                    <div className="w-2 h-2 rounded-full bg-primary" />
+                    <div className="h-2 w-2 rounded-full bg-primary" />
                   )}
                 </div>
                 <span className="text-sm">粉丝勋章</span>
               </div>
               {globalMute.type === "medal" && (
-                <div className="space-y-2 pl-10 pr-3">
+                <div className="space-y-2 pr-3 pl-10">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">阈值</span>
                     <span className="font-medium">
@@ -228,14 +228,14 @@ export function LiveRoomManagerMuteGlobal() {
                 </div>
               )}
               <div
-                className={`flex items-center gap-3 p-3 rounded-md cursor-pointer transition-colors ${globalMute.type === "member" ? "bg-destructive/10 border border-destructive" : "hover:bg-muted"}`}
+                className={`flex cursor-pointer items-center gap-3 rounded-md p-3 transition-colors ${globalMute.type === "member" ? "border border-destructive bg-destructive/10" : "hover:bg-muted"}`}
                 onClick={() =>
                   setGlobalMute({ ...globalMute, type: "member" })
                 }>
                 <div
-                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${globalMute.type === "member" ? "border-destructive" : "border-muted-foreground"}`}>
+                  className={`flex h-4 w-4 items-center justify-center rounded-full border-2 ${globalMute.type === "member" ? "border-destructive" : "border-muted-foreground"}`}>
                   {globalMute.type === "member" && (
-                    <div className="w-2 h-2 rounded-full bg-destructive" />
+                    <div className="h-2 w-2 rounded-full bg-destructive" />
                   )}
                 </div>
                 <span className="text-sm">全员</span>
@@ -265,7 +265,7 @@ export function LiveRoomManagerMuteGlobal() {
             </div>
             {!enabled ? (
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-destructive/10 border border-destructive rounded-md">
+                <div className="flex items-center justify-between rounded-md border border-destructive bg-destructive/10 p-3">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-destructive">
                       禁言已开启，剩余时长
@@ -274,7 +274,7 @@ export function LiveRoomManagerMuteGlobal() {
                   <div className="flex items-center gap-2">
                     <HugeiconsIcon
                       icon={Clock}
-                      className="w-4 h-4 text-destructive"
+                      className="h-4 w-4 text-destructive"
                     />
                     <span className="text-sm font-bold text-destructive">
                       {globalMute.duration === "permanent"

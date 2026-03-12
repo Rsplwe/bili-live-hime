@@ -88,7 +88,7 @@ export function CookieLogin({ onLoginSuccess }: CookieLoginProps) {
             }}
             placeholder="将您的 Cookie 粘贴到此处……"
             rows={4}
-            className="resize-none font-mono text-xs field-sizing-fixed"
+            className="field-sizing-fixed resize-none font-mono text-xs"
           />
         </div>
       </div>
@@ -114,8 +114,8 @@ export function CookieLogin({ onLoginSuccess }: CookieLoginProps) {
         )}
       </Button>
 
-      <div className="p-3 bg-muted rounded-lg">
-        <p className="text-xs text-muted-foreground leading-relaxed">
+      <div className="rounded-lg bg-muted p-3">
+        <p className="text-xs leading-relaxed text-muted-foreground">
           <strong className="text-foreground">如何获得 Cookie：</strong>
           <br />
           1. 在浏览器中登入哔哩哔哩网站

@@ -114,30 +114,30 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
 
   return (
     <div className="space-y-4">
-      <div className="relative aspect-square w-full max-w-50 mx-auto bg-card rounded-xl border border-border overflow-hidden">
+      <div className="relative mx-auto aspect-square w-full max-w-50 overflow-hidden rounded-xl border border-border bg-card">
         {qrStatus === "loading" ? (
           <div className="absolute inset-0 flex items-center justify-center">
-            <Spinner className="w-8 h-8 text-muted-foreground" />
+            <Spinner className="h-8 w-8 text-muted-foreground" />
           </div>
         ) : qrStatus === "expired" || qrStatus === "error" ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-card/95">
             <HugeiconsIcon
               icon={XCircle}
-              className="w-8 h-8 text-destructive"
+              className="h-8 w-8 text-destructive"
             />
             <Button
               variant="link"
               size="sm"
               onClick={generateQRCode}
               className="gap-1.5">
-              <HugeiconsIcon icon={RefreshCw} className="w-3.5 h-3.5" />
+              <HugeiconsIcon icon={RefreshCw} className="h-3.5 w-3.5" />
               刷新
             </Button>
           </div>
         ) : (
           <>
-            <div className="absolute inset-4 bg-foreground rounded-lg p-2">
-              <div className="w-full h-full bg-background rounded gap-0.5 p-2">
+            <div className="absolute inset-4 rounded-lg bg-foreground p-2">
+              <div className="h-full w-full gap-0.5 rounded bg-background p-2">
                 <QRCodeSVG size={135} value={qrCodeUrl} />
               </div>
             </div>
@@ -145,7 +145,7 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
               <div className="absolute inset-0 flex items-center justify-center bg-card/80">
                 <HugeiconsIcon
                   icon={CheckCircle}
-                  className="w-12 h-12 text-primary"
+                  className="h-12 w-12 text-primary"
                 />
               </div>
             )}
@@ -160,12 +160,12 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
 
       {(qrStatus === "pending" || qrStatus === "scanned") && (
         <Button variant="secondary" onClick={generateQRCode} className="w-full">
-          <HugeiconsIcon icon={RefreshCw} className="w-4 h-4 mr-2" />
+          <HugeiconsIcon icon={RefreshCw} className="mr-2 h-4 w-4" />
           刷新二维码
         </Button>
       )}
 
-      <p className="text-xs text-center text-muted-foreground">
+      <p className="text-center text-xs text-muted-foreground">
         打开您的哔哩哔哩 App 并扫描此二维码登入。
       </p>
     </div>

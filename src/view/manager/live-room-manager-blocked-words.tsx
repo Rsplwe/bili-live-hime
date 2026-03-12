@@ -78,17 +78,17 @@ export function LiveRoomManagerBlockedWords() {
     switch (state) {
       case "loading":
         return (
-          <div className="h-full flex items-center justify-center p-8">
+          <div className="flex h-full items-center justify-center p-8">
             <Spinner />
             <Label>加载中...</Label>
           </div>
         );
       case "error":
         return (
-          <div className="h-full flex flex-col items-center justify-center gap-4 p-8 text-center">
+          <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center">
             <HugeiconsIcon
               icon={XCircle}
-              className="w-6 h-6 text-destructive"
+              className="h-6 w-6 text-destructive"
             />
             <div className="space-y-1">
               <p className="text-sm font-medium text-foreground">加载失败</p>
@@ -101,14 +101,14 @@ export function LiveRoomManagerBlockedWords() {
               size="sm"
               className="gap-1.5"
               onClick={fetchKeywords}>
-              <HugeiconsIcon icon={RefreshCw} className="w-4 h-4" />
+              <HugeiconsIcon icon={RefreshCw} className="h-4 w-4" />
               刷新
             </Button>
           </div>
         );
       case "empty":
         return (
-          <div className="flex items-center justify-center h-30 text-muted-foreground text-sm">
+          <div className="flex h-30 items-center justify-center text-sm text-muted-foreground">
             屏蔽词列表为空
           </div>
         );
@@ -119,12 +119,12 @@ export function LiveRoomManagerBlockedWords() {
               <Badge
                 key={word}
                 variant="secondary"
-                className="pl-3 pr-1 py-1.5 gap-1 text-sm">
+                className="gap-1 py-1.5 pr-1 pl-3 text-sm">
                 {word}
                 <button
                   onClick={() => handleRemoveBlockedWord(word)}
-                  className="ml-1 hover:bg-muted-foreground/20 rounded p-0.5">
-                  <HugeiconsIcon className="w-4 h-4" icon={X} />
+                  className="ml-1 rounded p-0.5 hover:bg-muted-foreground/20">
+                  <HugeiconsIcon className="h-4 w-4" icon={X} />
                 </button>
               </Badge>
             ))}
@@ -164,7 +164,7 @@ export function LiveRoomManagerBlockedWords() {
             {blockedWords.length} / {maxLimit}
           </Badge>
         </div>
-        <div className="border rounded-md p-4 min-h-37.5">{content()}</div>
+        <div className="min-h-37.5 rounded-md border p-4">{content()}</div>
       </div>
     </>
   );
