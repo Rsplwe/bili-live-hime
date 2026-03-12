@@ -60,6 +60,10 @@ export function LiveRoomManagerBlockedWords() {
 
       setBlockedWords((prev) => [...prev, word]);
       setBlockedWordInput("");
+
+      if (state === "empty") {
+        setState("success");
+      }
     } catch (err) {
       toast.error((err as Error).message);
     }
