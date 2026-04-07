@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { Play, Square, Copy, Check } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,12 +36,12 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Separator } from "@/components/ui/separator";
 
 export function LiveStreamSettings() {
-  const [copiedField, setCopiedField] = useState<string | null>(null);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
   const [isQrDialogOpen, setIsQrDialogOpen] = useState<boolean>(false);
 
   const updateConfig = useConfigStore((s) => s.updateConfig);
   const areaList = useConfigStore((s) => s.config.areaList);
+  const uid = useConfigStore((state) => state.config.uid);
   const { roomTitle, categoryId, areaId, isOpenLive, streams } = useConfigStore(
     (s) => s.config,
   );
@@ -54,29 +54,104 @@ export function LiveStreamSettings() {
     () => selectedParent?.list ?? [],
     [selectedParent],
   );
-  const isTitleValid = useMemo(() => {
-    return roomTitle.trim() !== "";
-  }, [roomTitle]);
-  const isCategoryValid = useMemo(() => {
-    return categoryId !== "";
-  }, [categoryId]);
-  const isAreaValid = useMemo(() => {
-    return areaId !== "";
-  }, [areaId]);
+  const isTitleValid = roomTitle.trim() !== "";
+  const isCategoryValid = categoryId !== "";
+  const isAreaValid = areaId !== "";
 
   const canStartStream = useMemo(() => {
     return !isOpenLive && isTitleValid && isCategoryValid && isAreaValid;
   }, [isOpenLive, isTitleValid, isCategoryValid, isAreaValid]);
 
-  const handleCopy = async (text: string, field: string) => {
-    await navigator.clipboard.writeText(text);
-    setCopiedField(field);
-    setTimeout(() => setCopiedField(null), 2000);
-  };
+  const setIsStreaming = useCallback(
+    (status: boolean) => {
+      updateConfig({ isOpenLive: status });
+    },
+    [updateConfig],
+  );
 
-  const setIsStreaming = (status: boolean) => {
-    useConfigStore.getState().updateConfig({ isOpenLive: status });
-  };
+  const StreamCredentials = memo(({ streams }: { streams: Stream[] }) => {
+    const [copiedField, setCopiedField] = useState<string | null>(null);
+    const handleCopy = useCallback(async (text: string, field: string) => {
+      await navigator.clipboard.writeText(text);
+      setCopiedField(field);
+      setTimeout(() => setCopiedField(null), 2000);
+    }, []);
+    return (
+      <Card>
+        <CardContent className="space-y-3">
+          <div className="text-sm">流媒体凭证</div>
+          <Tabs defaultValue="rtmp-1" className="w-full">
+            <TabsList className="mb-4 w-full">
+              {streams.map((stream) => (
+                <TabsTrigger key={stream.type} value={stream.type}>
+                  {stream.type.toUpperCase()}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            {streams.map((stream) => (
+              <TabsContent
+                key={stream.type}
+                value={stream.type}
+                className="mt-0 space-y-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">
+                    服务器地址
+                  </Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      value={stream.address}
+                      readOnly
+                      className="font-mono text-xs"
+                    />
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      onClick={() => handleCopy(stream.address, stream.type)}>
+                      {copiedField === stream.type ? (
+                        <HugeiconsIcon
+                          icon={Check}
+                          className="h-4 w-4 text-primary"
+                        />
+                      ) : (
+                        <HugeiconsIcon icon={Copy} className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">
+                    流密钥
+                  </Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      value={stream.key}
+                      readOnly
+                      className="font-mono text-xs"
+                    />
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      onClick={() =>
+                        handleCopy(stream.key, `${stream.type}-key`)
+                      }>
+                      {copiedField === `${stream.type}-key` ? (
+                        <HugeiconsIcon
+                          icon={Check}
+                          className="h-4 w-4 text-primary"
+                        />
+                      ) : (
+                        <HugeiconsIcon icon={Copy} className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </TabsContent>
+            ))}
+          </Tabs>
+        </CardContent>
+      </Card>
+    );
+  });
 
   const handleStartStream = async () => {
     if (!canStartStream) return;
@@ -94,6 +169,13 @@ export function LiveStreamSettings() {
         case 60024:
           // 需要二维码验证
           setQrCodeUrl(startRes.data.qr);
+          setIsQrDialogOpen(true);
+          setIsStreaming(false);
+          return;
+        case 60043:
+          setQrCodeUrl(
+            `https://www.bilibili.com/blackboard/live/face-auth-middle.html?source_event=400&mid=${uid}`,
+          );
           setIsQrDialogOpen(true);
           setIsStreaming(false);
           return;
@@ -307,81 +389,7 @@ export function LiveStreamSettings() {
           </div>
         )}
       </div>
-      {isOpenLive && (
-        <Card>
-          <CardContent className="space-y-3">
-            <div className="text-sm">流媒体凭证</div>
-            <Tabs defaultValue="rtmp-1" className="w-full">
-              <TabsList className="mb-4 w-full">
-                {streams.map((stream) => (
-                  <TabsTrigger key={stream.type} value={stream.type}>
-                    {stream.type.toUpperCase()}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              {streams.map((stream) => (
-                <TabsContent
-                  key={stream.type}
-                  value={stream.type}
-                  className="mt-0 space-y-3">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs text-muted-foreground">
-                      服务器地址
-                    </Label>
-                    <div className="flex items-center gap-2">
-                      <Input
-                        value={stream.address}
-                        readOnly
-                        className="font-mono text-xs"
-                      />
-                      <Button
-                        variant="secondary"
-                        size="icon"
-                        onClick={() => handleCopy(stream.address, stream.type)}>
-                        {copiedField === stream.type ? (
-                          <HugeiconsIcon
-                            icon={Check}
-                            className="h-4 w-4 text-primary"
-                          />
-                        ) : (
-                          <HugeiconsIcon icon={Copy} className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs text-muted-foreground">
-                      流密钥
-                    </Label>
-                    <div className="flex items-center gap-2">
-                      <Input
-                        value={stream.key}
-                        readOnly
-                        className="font-mono text-xs"
-                      />
-                      <Button
-                        variant="secondary"
-                        size="icon"
-                        onClick={() =>
-                          handleCopy(stream.key, `${stream.type}-key`)
-                        }>
-                        {copiedField === `${stream.type}-key` ? (
-                          <HugeiconsIcon
-                            icon={Check}
-                            className="h-4 w-4 text-primary"
-                          />
-                        ) : (
-                          <HugeiconsIcon icon={Copy} className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                </TabsContent>
-              ))}
-            </Tabs>
-          </CardContent>
-        </Card>
-      )}
+      {isOpenLive && <StreamCredentials streams={streams} />}
     </div>
   );
 }
