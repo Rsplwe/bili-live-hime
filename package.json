@@ -17,7 +17,7 @@
   "dependencies": {
     "@hugeicons/core-free-icons": "^4.2.0",
     "@hugeicons/react": "^1.1.6",
-    "@tailwindcss/vite": "^4.3.0",
+    "@tailwindcss/vite": "^4.3.1",
     "@tanstack/react-query": "^5.101.0",
     "@tanstack/react-virtual": "^3.14.2",
     "@tauri-apps/api": "^2",
