@@ -9,6 +9,7 @@ import {
 import { useConfigStore } from "@/store/config";
 import { getUserInfo } from "@/api/user";
 import { getAreaList, getRoomId, getRoomToken } from "@/api/live";
+import { getRoomInfo } from "@/api/cover";
 import { Spinner } from "@/components/ui/spinner";
 
 interface LoadingScreenProps {
@@ -61,6 +62,20 @@ export function LoadingScreen({ onValidationComplete }: LoadingScreenProps) {
         setStatus("获取分区信息...");
         const areaRes = await getAreaList();
         state.updateConfig({ areaList: areaRes });
+
+        // Online info takes priority, then offline info fallback
+        try {
+          const roomInfo = await getRoomInfo(roomIdRes.room_id);
+          state.updateConfig({
+            roomTitle: roomInfo.title || "",
+            categoryId: roomInfo.parent_area_id
+              ? String(roomInfo.parent_area_id)
+              : "",
+            areaId: roomInfo.area_id ? String(roomInfo.area_id) : "",
+          });
+        } catch (error) {
+          console.error("Get Room Info:", error);
+        }
 
         setStatus("获取消息流...");
         const roomTokenRes = await getRoomToken(roomIdRes.room_id);

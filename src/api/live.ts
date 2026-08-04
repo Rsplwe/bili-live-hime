@@ -123,7 +123,7 @@ export async function getRoomId(uid: number): Promise<RoomId> {
 }
 
 export async function getAreaList(): Promise<ParentArea[]> {
-  return request<ParentArea[]>(
+  const areas = await request<ParentArea[]>(
     BASE_URL,
     "/room/v1/Area/getList?show_pinyin=1",
     {
@@ -132,6 +132,16 @@ export async function getAreaList(): Promise<ParentArea[]> {
       },
     },
   );
+
+  return areas.map((parent) => ({
+    ...parent,
+    id: String(parent.id),
+    list: parent.list.map((area) => ({
+      ...area,
+      id: String(area.id),
+      parent_id: String(area.parent_id),
+    })),
+  }));
 }
 
 export async function getRoomToken(roomId: number): Promise<RoomTokenInfo> {

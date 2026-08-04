@@ -1,9 +1,10 @@
-import { memo, useCallback, useMemo, useState } from "react";
-import { Play, Square, Copy, Check } from "@hugeicons/core-free-icons";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { Play, Square, Copy, Check, RefreshIcon } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -12,6 +13,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useConfigStore } from "@/store/config";
 import type { Area, Stream } from "@/types/config";
 import {
@@ -31,20 +38,47 @@ import {
   updateRoomArea,
   updateRoomTitle,
 } from "@/api/live";
+import {
+  getCoverHistory,
+  getPreLiveInfo,
+  type CoverHistoryItem,
+  type PreLiveInfo,
+} from "@/api/cover";
+import { CoverDialog } from "@/view/cover-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Separator } from "@/components/ui/separator";
+
+type AuditChipTone = "success" | "warning" | "danger" | "neutral";
+
+interface AuditChip {
+  key: string;
+  text: string;
+  tone: AuditChipTone;
+  reason?: string;
+}
+
+const CHIP_TONE_CLASS: Record<AuditChipTone, string> = {
+  success: "bg-green-600",
+  warning: "bg-yellow-500",
+  danger: "bg-red-600",
+  neutral: "bg-muted-foreground",
+};
+
+// Poll interval for audit status while the cover or the title is auditing.
+const AUDIT_POLL_INTERVAL_MS = 15000;
 
 export function LiveStreamSettings() {
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
   const [isQrDialogOpen, setIsQrDialogOpen] = useState<boolean>(false);
+  const [preLiveInfo, setPreLiveInfo] = useState<PreLiveInfo | null>(null);
+  const [coverHistory, setCoverHistory] = useState<CoverHistoryItem[]>([]);
+  const [isCoverDialogOpen, setIsCoverDialogOpen] = useState<boolean>(false);
 
   const updateConfig = useConfigStore((s) => s.updateConfig);
   const areaList = useConfigStore((s) => s.config.areaList);
   const uid = useConfigStore((state) => state.config.uid);
-  const { roomTitle, categoryId, areaId, isOpenLive, streams } = useConfigStore(
-    (s) => s.config,
-  );
+  const { roomTitle, categoryId, areaId, isOpenLive, streams } =
+    useConfigStore((s) => s.config);
 
   const selectedParent = useMemo(
     () => areaList.find((p) => p.id === categoryId),
@@ -58,9 +92,122 @@ export function LiveStreamSettings() {
   const isCategoryValid = categoryId !== "";
   const isAreaValid = areaId !== "";
 
-  const canStartStream = useMemo(() => {
-    return !isOpenLive && isTitleValid && isCategoryValid && isAreaValid;
-  }, [isOpenLive, isTitleValid, isCategoryValid, isAreaValid]);
+  const canStartStream =
+    !isOpenLive && isTitleValid && isCategoryValid && isAreaValid;
+
+  const coverUrl = preLiveInfo?.cover?.url ?? "";
+
+  const auditChips = useMemo<AuditChip[]>(() => {
+    const chips: AuditChip[] = [];
+    let coverOk = false;
+    let titleOk = false;
+    let hasCover = false;
+    if (preLiveInfo) {
+      const cover = preLiveInfo.cover;
+      if (cover && cover.url) {
+        hasCover = true;
+        switch (cover.auditStatus) {
+          case 0:
+            chips.push({
+              key: "cover-auditing",
+              text: "封面审核中",
+              tone: "warning",
+            });
+            break;
+          case 1:
+            coverOk = true;
+            break;
+          case -1:
+            chips.push({
+              key: "cover-rejected",
+              text: "封面审核失败",
+              tone: "danger",
+              reason: cover.auditReason,
+            });
+            break;
+          default:
+            chips.push({
+              key: "cover-unknown",
+              text: "封面审核状态未知",
+              tone: "neutral",
+            });
+        }
+      }
+      const titleStatus = preLiveInfo.audit_info?.audit_title_status;
+      switch (titleStatus) {
+        case 0:
+          titleOk = true;
+          break;
+        case 1:
+          chips.push({
+            key: "title-auditing",
+            text: "标题审核中",
+            tone: "warning",
+          });
+          break;
+        case 2:
+          titleOk = true;
+          break;
+        default:
+          chips.push({
+            key: "title-unknown",
+            text: "标题审核状态未知",
+            tone: "neutral",
+            reason: preLiveInfo.audit_info?.audit_title_reason,
+          });
+      }
+    }
+    const hasIssue = chips.some(
+      (c) =>
+        c.tone === "warning" || c.tone === "danger" || c.tone === "neutral",
+    );
+    if (!hasIssue && titleOk && (!hasCover || coverOk)) {
+      chips.unshift({ key: "approved", text: "审核通过", tone: "success" });
+    }
+    return chips;
+  }, [preLiveInfo]);
+
+  const loadPreLiveInfo = useCallback(async () => {
+    try {
+      const info = await getPreLiveInfo();
+      setPreLiveInfo(info);
+    } catch (error) {
+      console.error("Get PreLive Info:", error);
+    }
+  }, []);
+
+  const loadCoverHistory = useCallback(async () => {
+    try {
+      const history = await getCoverHistory();
+      setCoverHistory(history.cover_history ?? []);
+    } catch (error) {
+      console.error("Get Cover History:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadPreLiveInfo();
+    void loadCoverHistory();
+  }, [loadPreLiveInfo, loadCoverHistory]);
+
+  // Poll the audit status every 15s while the cover or the title is auditing.
+  // Stops when neither is auditing anymore, or when the component unmounts
+  // (e.g. the user leaves the live stream settings page).
+  const shouldPollAudit = useMemo(() => {
+    if (!preLiveInfo) return false;
+    return (
+      preLiveInfo.cover?.auditStatus === 0 ||
+      preLiveInfo.audit_info?.audit_title_status === 1
+    );
+  }, [preLiveInfo]);
+
+  useEffect(() => {
+    if (!shouldPollAudit) return;
+    const timer = setInterval(() => {
+      void loadPreLiveInfo();
+    }, AUDIT_POLL_INTERVAL_MS);
+    return () => clearInterval(timer);
+  }, [shouldPollAudit, loadPreLiveInfo]);
 
   const setIsStreaming = useCallback(
     (status: boolean) => {
@@ -227,10 +374,10 @@ export function LiveStreamSettings() {
   };
 
   const handleUpdateTitle = async () => {
-    // 设置直播间标题
     try {
       await updateRoomTitle(roomTitle);
       toast.success("直播间标题更新成功");
+      await loadPreLiveInfo();
     } catch (error) {
       toast.error((error as Error).message);
     }
@@ -246,32 +393,81 @@ export function LiveStreamSettings() {
     }
   };
 
+  const handleCoverApplied = useCallback(async () => {
+    await Promise.all([loadPreLiveInfo(), loadCoverHistory()]);
+  }, [loadPreLiveInfo, loadCoverHistory]);
+
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardContent className="space-y-3">
-          <div className="space-y-1.5">
-            <div className="space-y-2">
-              <Label htmlFor="stream-title">直播间标题</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="stream-title"
-                  value={roomTitle}
-                  onChange={(e) => updateConfig({ roomTitle: e.target.value })}
-                  placeholder="请输入您的直播标题……"
-                  className="flex-1"
-                />
-                <LoadingButton
-                  variant="outline"
-                  onClickAsync={handleUpdateTitle}
-                  disabled={!isTitleValid}>
-                  更新标题
-                </LoadingButton>
+    <TooltipProvider>
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="space-y-4">
+            <div className="text-sm">直播间信息</div>
+            <div className="flex items-start gap-4">
+              <button
+                type="button"
+                onClick={() => setIsCoverDialogOpen(true)}
+                className="group relative aspect-4/3 w-24 shrink-0 overflow-hidden rounded-lg border bg-muted">
+                {coverUrl ? (
+                  <img
+                    src={coverUrl}
+                    alt="直播间封面"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
+                    暂无封面
+                  </span>
+                )}
+                <span className="absolute inset-0 flex items-center justify-center gap-1 bg-black/50 text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
+                  <HugeiconsIcon icon={RefreshIcon} className="h-3.5 w-3.5" />
+                  更换封面
+                </span>
+              </button>
+              <div className="min-w-0 flex-1 space-y-3">
+                <div className="flex gap-2">
+                  <Input
+                    id="stream-title"
+                    value={roomTitle}
+                    onChange={(e) =>
+                      updateConfig({ roomTitle: e.target.value })
+                    }
+                    placeholder="请输入您的直播标题……"
+                    className="flex-1"
+                  />
+                  <LoadingButton
+                    variant="outline"
+                    onClickAsync={handleUpdateTitle}
+                    disabled={!isTitleValid}
+                    loadingText="更新中">
+                    更新标题
+                  </LoadingButton>
+                </div>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {auditChips.map((chip) => (
+                    <Badge
+                      key={chip.key}
+                      className={CHIP_TONE_CLASS[chip.tone]}>
+                      {chip.text}
+                      {chip.reason && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="cursor-help underline decoration-dotted">
+                              [i]
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>{chip.reason}</TooltipContent>
+                        </Tooltip>
+                      )}
+                    </Badge>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-          <Separator />
-          <div className="space-y-4">
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <Label>分区设置</Label>
               <LoadingButton
@@ -344,9 +540,10 @@ export function LiveStreamSettings() {
                 </Select>
               </div>
             </div>
-          </div>
-          <Separator />
-          <div className="flex gap-3">
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex gap-3">
             <LoadingButton
               onClickAsync={handleStartStream}
               disabled={!canStartStream}
@@ -362,34 +559,41 @@ export function LiveStreamSettings() {
               <HugeiconsIcon icon={Square} className="mr-1" />
               停止直播
             </LoadingButton>
-          </div>
-        </CardContent>
-      </Card>
-      <Dialog modal open={isQrDialogOpen} onOpenChange={setIsQrDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>验证</DialogTitle>
-            <DialogDescription>
-              本次开播需要身份验证，请使用哔哩哔哩 App
-              扫码完成验证。扫码完成后，请手动关闭此对话框。
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex items-center gap-2">
-            <div className="grid flex-1 gap-2">
-              <QRCodeSVG value={qrCodeUrl} size={240} />
+          </CardContent>
+        </Card>
+        <Dialog modal open={isQrDialogOpen} onOpenChange={setIsQrDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>验证</DialogTitle>
+              <DialogDescription>
+                本次开播需要身份验证，请使用哔哩哔哩 App
+                扫码完成验证。扫码完成后，请手动关闭此对话框。
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex items-center gap-2">
+              <div className="grid flex-1 gap-2">
+                <QRCodeSVG value={qrCodeUrl} size={240} />
+              </div>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-      <div className="space-y-2">
-        {isOpenLive && (
-          <div className="flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/10 px-3 py-2">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
-            <span className="text-xs text-foreground">直播中</span>
-          </div>
-        )}
+          </DialogContent>
+        </Dialog>
+        <div className="space-y-2">
+          {isOpenLive && (
+            <div className="flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/10 px-3 py-2">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
+              <span className="text-xs text-foreground">直播中</span>
+            </div>
+          )}
+        </div>
+        {isOpenLive && <StreamCredentials streams={streams} />}
+        <CoverDialog
+          open={isCoverDialogOpen}
+          onOpenChange={setIsCoverDialogOpen}
+          history={coverHistory}
+          currentCoverUrl={coverUrl}
+          onApplied={handleCoverApplied}
+        />
       </div>
-      {isOpenLive && <StreamCredentials streams={streams} />}
-    </div>
+    </TooltipProvider>
   );
 }
