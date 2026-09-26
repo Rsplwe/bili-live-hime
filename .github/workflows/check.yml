@@ -7,14 +7,16 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       # -------------------------
-      # Node / React
+      # Node / Tauri
       # -------------------------
       - name: Setup Node
         uses: actions/setup-node@v6
@@ -24,9 +26,6 @@ jobs:
 
       - name: Install frontend deps
         run: npm ci
-
-      - name: Build frontend
-        run: npm run build
 
       # -------------------------
       # Rust
@@ -39,15 +38,17 @@ jobs:
       - name: Cache Rust
         uses: Swatinem/rust-cache@v2
         with:
-          workspaces: './src-tauri -> target'
+          workspaces: "./src-tauri -> target"
 
       # -------------------------
-      # Linux Tauri deps
+      # Linux Tauri and Fcitx5 GTK3 deps
       # -------------------------
       - name: Install system deps
         run: |
           sudo apt update
-          sudo apt install libwebkit2gtk-4.1-dev \
+          sudo apt install -y \
+            fcitx5-frontend-gtk3 \
+            libwebkit2gtk-4.1-dev \
             build-essential \
             curl \
             wget \
@@ -57,5 +58,31 @@ jobs:
             libayatana-appindicator3-dev \
             librsvg2-dev
 
-      - name: Build Tauri
-        run: cargo build --manifest-path src-tauri/Cargo.toml --release
+      - name: Build AppImage
+        run: npm run tauri -- build --bundles appimage
+
+      - name: Verify the AppImage contains the Fcitx5 GTK3 module
+        shell: bash
+        run: |
+          set -euo pipefail
+          appimage="$(find src-tauri/target/release/bundle/appimage -maxdepth 1 -name '*.AppImage' -print -quit)"
+          test -n "$appimage"
+          mkdir -p "$RUNNER_TEMP/appimage-check"
+          (
+            cd "$RUNNER_TEMP/appimage-check"
+            "$GITHUB_WORKSPACE/$appimage" --appimage-extract >/dev/null
+          )
+          appdir="$RUNNER_TEMP/appimage-check/squashfs-root"
+          module="$(find "$appdir/usr/lib" -name im-fcitx5.so -print -quit)"
+          cache="$(find "$appdir/usr/lib" -path '*/gtk-3.0/3.0.0/immodules.cache' -print -quit)"
+          test -n "$module"
+          test -n "$cache"
+          grep -q 'im-fcitx5.so' "$cache"
+
+      - name: Upload Linux AppImage for manual testing
+        uses: actions/upload-artifact@v4
+        with:
+          name: Bili-Live-Hime-Linux-AppImage
+          path: src-tauri/target/release/bundle/appimage/*.AppImage
+          if-no-files-found: error
+          retention-days: 7
